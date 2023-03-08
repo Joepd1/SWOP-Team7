@@ -28,7 +28,7 @@ public class Developer extends User {
 	 * @param task is the task which this developer has chosen to execute
 	 */
 	public void addTask(Task task) {
-		if (task.getStatus().makeString() == "executing" && !task.getStatus().isAvailable()) {
+		if (task.executingTask() && !task.availableTask()) {
 			this.tasks.add(task);
 		}
 		else {
@@ -53,11 +53,11 @@ public class Developer extends User {
 			throw new IllegalArgumentException();
 		}
 		//Task is waiting for a depending task to be finished
-		if (!task.getStatus().isAvailable() && (task.getStatus().makeString() == "waiting")) {  
+		if (!task.availableTask() && task.waitingTask()) {  
 			throw new IllegalArgumentException();
 		}
 		//Task is waiting to be executed -> exec
-		else if (task.getStatus().isAvailable() && (task.getStatus().makeString() == "waiting")) {
+		else if (task.availableTask() && task.waitingTask()) {
 			if (status.makeString() != "executing" ) {
 				throw new IllegalArgumentException();
 			}
@@ -68,8 +68,8 @@ public class Developer extends User {
 			}
 		}
 		//Task is executing -> fail/finish
-		else if (task.getStatus().makeString() == "executing") {
-			if (status.makeString() == "failed") {
+		else if (task.executingTask()) {
+			if (status.isFailed()) {
 				task.failTask();
 			}
 			else if (status.isFinished()) {

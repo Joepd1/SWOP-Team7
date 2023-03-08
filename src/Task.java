@@ -3,8 +3,6 @@ package src;
 import java.util.List;
 
 /**
- * TODO: failedTask(); executingTask(); waitingTask()
- * 
  * @author vincent
  */
 public class Task {
@@ -69,7 +67,7 @@ public class Task {
 					this.status.setAvailability(false);
 					once  = false;
 				}
-				else if (task.getStatus().makeString() != "finished") {
+				else if (!finishedTask()) {
 					this.waitingFor.add(task);
 				}				
 			}
@@ -118,14 +116,27 @@ public class Task {
 	/**
 	 * Getter that indicates if this task is finished.
 	 */
-	public boolean finishedTask() {
-		if ( this.getStatus().isFinished()) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+	public boolean finishedTask() {return this.getStatus().isFinished();}
+	
+	/**
+	 * Getter that indicates if this task is failed.
+	 */
+	public boolean failedTask() {return this.getStatus().isFailed();}
+	
+	/**
+	 * Getter that indicates if this task is executing.
+	 */
+	public boolean executingTask() {return this.getStatus().isExecuting();}
+	
+	/**
+	 * Getter that indicates if this task is waiting.
+	 */
+	public boolean waitingTask() {return this.getStatus().isWaiting();}
+	
+	/**
+	 * Getter that indicates if this task is available.
+	 */
+	public boolean availableTask() {return this.getStatus().isAvailable();}
 	
 	/**
 	 * This function is called when a developer indicates a task as finished. It will update the statuses of the tasks
@@ -198,7 +209,7 @@ public class Task {
 		if (this.finishedTask() || this.getStatus().makeString() == "failed") {
 			return this.timeSpan.getTimeSpan();
 		}
-		else if (this.getStatus().makeString() == "executing") {
+		else if (this.executingTask()) {
 			return this.timeSpan.getElapsedTime(this);
 		}
 		else {

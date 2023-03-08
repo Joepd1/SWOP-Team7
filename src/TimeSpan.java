@@ -51,7 +51,7 @@ public class TimeSpan {
 	 * @pre task has to be in executing state
 	 */
 	public String getElapsedTime(Task task) {
-		if (task.getStatus().makeString() == "executing") {
+		if (task.executingTask()) {
 			long timeNow = System.currentTimeMillis();
 			long elapsedTime = (timeNow - this.startTime);
 			int minutes = (int) ((elapsedTime / (1000*60)) % 60);
@@ -60,7 +60,7 @@ public class TimeSpan {
 			String mins = Integer.toString(minutes);
 			return hrs + "h" + mins;
 		}
-		else if (task.getStatus().makeString() == "waiting") {
+		else if (task.waitingTask()) {
 			throw new IllegalArgumentException();
 		}
 		else {

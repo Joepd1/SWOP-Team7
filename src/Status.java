@@ -33,4 +33,28 @@ public class Status {
 			return false;
 		}
 	}
+	
+	/**
+	 * Getter to indicate if the task/project is failed or not
+	 */
+	public boolean isFailed() {
+		if (this.status == "failed") {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Getter to indicate if the task/project is being executed or not
+	 */
+	public boolean isExecuting() {
+		if (this.status == "executing") {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }

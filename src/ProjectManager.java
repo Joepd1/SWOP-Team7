@@ -39,7 +39,7 @@ public class ProjectManager extends User {
 	 * @param newTask is the task that must replace the failed task in the given project.
 	 */
 	public void replaceTask (Project project, Task failedTask, Task newTask) {
-		if (failedTask.getStatus().makeString() !=  "failed") { // || !this.projects.contains(failedTask)
+		if (!failedTask.failedTask()) { // || !this.projects.contains(failedTask)
 			throw new IllegalArgumentException();
 		}
 		else {
