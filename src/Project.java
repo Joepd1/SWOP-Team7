@@ -5,27 +5,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 
+ * @author vincent
+ */
 public class Project {
-	private HashMap<Task,List<Task>> dependencies; 
+	private HashMap<Task,List<Task>> dependencies; //Key depends on value
 	private String name;
 	private String description;
 	private String dueTime;
 	private List<Task> tasks;
-	private Status status;
+	private ProjectStatus status;
 	private long creationTime;
 
 	/**
 	 * @param The project will be instantiated with the given name.
 	 * @param The project will be instantiated with the given description.
 	 * @param The project will be instantiated with the given due time.
-	 * @post A status class will be created to represent this project
-	 * @post The time of creation will be instantiated with the time now
 	 */
 	public Project(String name, String desc, String dueTime) {
 		this.name = name;
 		this.description = desc;
 		this.dueTime = dueTime;
-		this.status = new Status();
+		this.status = new ProjectStatus();
 		this.creationTime = System.currentTimeMillis();
 	};
 	
@@ -34,9 +36,9 @@ public class Project {
 	 * 	finished so returns false; if every task is finished the project will be finished and this will 
 	 * 	return true.
 	 */
-	public boolean isFinished() {
+	public boolean finishedProject() {
 		for (Task t : this.tasks) {
-			if ( !t.isFinished()) {return false;}
+			if ( !t.finishedTask()) {return false;}
 		}
 		return true;
 	}
@@ -90,8 +92,9 @@ public class Project {
 	 */
 	public void replace(Task oldTask, Task newTask) {
 		List <Task> dep = this.dependencies.get(oldTask);
-		this.dependencies.remove(oldTask,dep);
+		this.dependencies.remove(oldTask, dep);
 		this.dependencies.put(newTask, dep);
+		
 		for (Map.Entry<Task, List<Task>> entry : this.dependencies.entrySet()) {
 			List<Task> tempList = entry.getValue();
 			Task tempTask = entry.getKey();
@@ -103,17 +106,22 @@ public class Project {
 		}
 	}
 	
+//	/**
+//	 * This function returns the Tasks that depend on the given task
+//	 * @param task is the task that we want the dependants of
+//	 */
+//	public List<Task> getDependencies(Task task) {
+//		List<Task> tasks = new ArrayList<Task>();
+//		for (Map.Entry<Task, List<Task>> entry : this.dependencies.entrySet()) {
+//			if (entry.getValue().contains(task)) {
+//				tasks.add(entry.getKey());
+//			}
+//		}
+//		return tasks;
+//	}
+	
 	/**
-	 * This function returns the Tasks that depend on the given task
-	 * @param task is the task that we want the dependants of
+	 * This function returns all the tasks in this project.
 	 */
-	public List<Task> getDependencies(Task task) {
-		List<Task> tasks = new ArrayList<Task>();
-		for (Map.Entry<Task, List<Task>> entry : this.dependencies.entrySet()) {
-			if (entry.getValue().contains(task)) {
-				tasks.add(entry.getKey());
-			}
-		}
-		return tasks;
-	}
+	public List<Task> getTasks() {return this.tasks;}
 }
