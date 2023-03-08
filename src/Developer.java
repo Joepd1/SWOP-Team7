@@ -62,7 +62,9 @@ public class Developer extends User {
 				throw new IllegalArgumentException();
 			}
 			else {
-				task.startTask(this);
+				if (!task.startTask(this)) {
+					throw new IllegalArgumentException();
+				}
 			}
 		}
 		//Task is executing -> fail/finish
