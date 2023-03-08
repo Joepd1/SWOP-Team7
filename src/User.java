@@ -1,7 +1,14 @@
 package src;
 
+
+/**
+ * 
+ * @author vincent
+ */
 public class User {
-	protected String name;
 	
-	public User() {}
+	/**
+	 * @contains the name of the associated user.
+	 */
+	protected String name;
 }

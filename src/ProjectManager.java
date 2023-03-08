@@ -2,12 +2,25 @@ package src;
 
 import java.util.List;
 
+
+//TODO: 	
+// ADVANCE TIME
+// START UP
+// CREATE PROJECT	
+// CREATE TASK
+// (LOG IN & OUT ?)
+// SHOW PROJECTS
+
+/**
+ * 
+ * @author vincent
+ */
 public class ProjectManager extends User {
 	
 	/**
 	 * Contains the list of all projects this user is managing.
 	 */
-	protected List<Project> projects;
+	private List<Project> projects;
 
 	/**
 	 * The constructor instantiates the super class (User) with the correct name.
