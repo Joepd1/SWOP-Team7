@@ -106,20 +106,6 @@ public class Project {
 		}
 	}
 	
-//	/**
-//	 * This function returns the Tasks that depend on the given task
-//	 * @param task is the task that we want the dependants of
-//	 */
-//	public List<Task> getDependencies(Task task) {
-//		List<Task> tasks = new ArrayList<Task>();
-//		for (Map.Entry<Task, List<Task>> entry : this.dependencies.entrySet()) {
-//			if (entry.getValue().contains(task)) {
-//				tasks.add(entry.getKey());
-//			}
-//		}
-//		return tasks;
-//	}
-	
 	/**
 	 * This function returns all the tasks in this project.
 	 */
