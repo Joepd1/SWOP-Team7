@@ -72,7 +72,7 @@ public class Developer extends User {
 			if (status.makeString() == "failed") {
 				task.failTask();
 			}
-			else if (status.makeString() == "finished") {
+			else if (status.isFinished()) {
 				task.finishTask();
 			}
 			else {

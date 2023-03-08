@@ -4,7 +4,6 @@ package src;
  * The status of a project or task can be executing, failed or finished.
  *  The status of a task can also be waiting, and can also be available or unavailable.
  * @author vincent
- *
  */
 public class Status {
 
@@ -22,4 +21,16 @@ public class Status {
 	 * This function changes the status of this task.
 	 */
 	public void setStatus(String status) {this.status = status;}
+	
+	/**
+	 * Getter to indicate if the task/project is completed or not
+	 */
+	public boolean isFinished() {
+		if (this.status == "finished") {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }
