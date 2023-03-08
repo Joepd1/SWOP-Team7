@@ -1,0 +1,27 @@
+
+import java.io.*;
+import Controller;
+
+abstract class User{
+    private string name;
+
+    public static string getName()
+    {   
+        return this.name;
+    }
+
+    private static void setName(string newName)
+    {
+        this.name = newName;
+    }
+
+    public static void display(String output)
+    {
+        System.out.print(output);
+    }
+
+    public static string askInput()
+    {
+
+    }
+}
