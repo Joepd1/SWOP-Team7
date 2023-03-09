@@ -85,9 +85,7 @@ public class Project {
 		return true;		
 	}
 	
-	
-	//DEPENDENCIES AANPASSEN?
-	
+		
 	/**
 	 * This function replaces the dependencies from old to new; In both the dependencies where the old task is depenendent
 	 * 	as where the old task is the dependant.
@@ -95,10 +93,12 @@ public class Project {
 	 * @param newTask is the task that replaces the failed task
 	 */
 	public void replace(Task oldTask, Task newTask) {
+		newTask.addDepending(oldTask.dependsOn());
+		newTask.addWaiting(oldTask.waitingFor());
+		
 		List <Task> dep = this.dependencies.get(oldTask);
 		this.dependencies.remove(oldTask, dep);
 		this.dependencies.put(newTask, dep);
-		
 		for (Map.Entry<Task, List<Task>> entry : this.dependencies.entrySet()) {
 			List<Task> tempList = entry.getValue();
 			Task tempTask = entry.getKey();

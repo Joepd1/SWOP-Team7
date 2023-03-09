@@ -16,6 +16,11 @@ import java.util.List;
  * @author vincent
  */
 public class ProjectManager extends User {
+	
+	/**
+	 * Contains the list of all projects this user is managing.
+	 */
+	private List<Project> projects;
 
 	/**
 	 * The constructor instantiates the super class (User) with the correct name.
@@ -34,7 +39,7 @@ public class ProjectManager extends User {
 	 * @param newTask is the task that must replace the failed task in the given project.
 	 */
 	public void replaceTask (Project project, Task failedTask, Task newTask) {
-		if (!failedTask.failedTask()) { // || !this.projects.contains(failedTask)
+		if (!failedTask.failedTask() || !this.projects.contains(failedTask)) {
 			throw new IllegalArgumentException();
 		}
 		else {

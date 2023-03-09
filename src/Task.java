@@ -80,6 +80,31 @@ public class Task {
 	public List<Task> dependsOn() {return this.dependsOnMe;}
 	
 	/**
+	 * Setter to update the list of tasks that depend on this task.
+	 * @param dep are the tasks that have to be added to this list.
+	 */
+	public void addDepending(List<Task> dep) {
+		for (Task t : dep) {
+			if (!this.dependsOnMe.contains(t)) {
+				this.dependsOnMe.add(t);
+			}
+		}
+	}
+	
+	/**
+	 * Setter to uodate the list of tasks that are waiting for this task to be
+	 * 	finished.
+	 * @param wait are the tasks that have to be added to this list.
+	 */
+	public void addWaiting(List<Task> wait) {
+		for (Task t : wait) {
+			if (!this.imWaitingFor.contains(t)) {
+				this.imWaitingFor.add(t);
+			}
+		}
+	}
+	
+	/**
 	 * This function will be called when a developer chooses to execute this task and will initialize the field performedBy with the given developer. 
 	 *  It also starts the timer and sets the status to unavailable & executing.
 	 *  
