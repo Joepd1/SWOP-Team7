@@ -8,6 +8,9 @@ import java.util.List;
  */
 public class ProjectStatus extends Status {
 	
+	/**
+	 * @contains the project this status is representing.
+	 */
 	private Project project;
 	
 	/**

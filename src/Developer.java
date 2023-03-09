@@ -2,6 +2,8 @@ package src;
 
 import java.util.List;
 
+import src.Status.status;
+
 /**
  * TODO: (LOGIN & LOGOUT ?)
  * @author vincent
@@ -28,7 +30,7 @@ public class Developer extends User {
 	 * @param task is the task which this developer has chosen to execute
 	 */
 	public void addTask(Task task) {
-		if (task.executingTask() && !task.availableTask()) {
+		if (task.pendingTask() && task.startTask(this)) {
 			this.tasks.add(task);
 		}
 		else {
@@ -37,10 +39,9 @@ public class Developer extends User {
 	}
 	
 	/**
-	 * This function enables a developer to change the status of a task he is performing.
-	 * 	A task that is waiting for another task to be completed fist can't be altered;
-	 * 	A task that is waiting to be executed can only be put in executing state;
-	 *  A task that is being executed can only be put in failed or finished state.
+	 * This function enables a developer to change the status of a task he is executing.
+	 *  A task that is being executed can only be put in failed or finished state; and one
+	 *  that isn't being executed can't be altered.
 	 *  
 	 * @pre The developer (this) that calls this function must be working on the task 
 	 * 	he want's to change the status of. 
@@ -48,40 +49,15 @@ public class Developer extends User {
 	 * @param status is the specific status the developer want's to change the status
 	 * 	of the task into
 	 */
-	public void setTaskStatus(Task task, TaskStatus status) {
-		if (!this.tasks.contains(task)) {
+	public void setTaskStatus(Task task, status status) {
+		if (!this.tasks.contains(task) || !task.executingTask()) {
 			throw new IllegalArgumentException();
 		}
-		//Task is waiting for a depending task to be finished
-		if (!task.availableTask() && task.waitingTask()) {  
-			throw new IllegalArgumentException();
+		else if (status.equals(status.FAILED)) {
+			task.failTask();
 		}
-		//Task is waiting to be executed -> exec
-		else if (task.availableTask() && task.waitingTask()) {
-			if (task.executingTask() ) {
-				throw new IllegalArgumentException();
-			}
-			else {
-				if (!task.startTask(this)) {
-					throw new IllegalArgumentException();
-				}
-			}
-		}
-		//Task is executing -> fail/finish
-		else if (task.executingTask()) {
-			if (status.isFailed()) {
-				task.failTask();
-			}
-			else if (status.isFinished()) {
-				task.finishTask();
-			}
-			else {
-				throw new IllegalArgumentException();
-			}
-		}
-		//Task is failed/finished -> error
 		else {
-			throw new IllegalArgumentException();
+			task.finishTask();
 		}
 	}
 }

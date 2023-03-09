@@ -106,7 +106,6 @@ public class Task {
 			this.timeSpan = new TimeSpan(this);
 			this.performedBy = developer;
 			this.status.startTask();
-			developer.addTask(this);
 			return true;
 		}
 	}
@@ -138,34 +137,18 @@ public class Task {
 	
 	/**
 	 * This function is called when a developer indicates a task as finished. It will update the statuses of the tasks
-	 * 	that are waiting for this task to be finished to available and calculate the duration of this task so it can 
-	 * 	return if the task is finished early, on time or late.
+	 * 	that are waiting for this task to be finished to available (if this is possible) and update the timeSpan.
 	 * 
 	 * @pre The task is indicated as finished
 	 */
 	public void finishTask() {
 		this.timeSpan.endTask();
+		this.status.finishStatus();
 		updateDepStatus();
-			
-//		String span = this.timeSpan.getTimeSpan();
-//		String[] arrOfStr = span.split("h");
-//		int duration = Integer.parseInt(arrOfStr[0]) * 60;
-//		duration += Integer.parseInt(arrOfStr[1]);
-//		float minDeviation = this.esitmatedDuration - (this.esitmatedDuration*this.acceptableDeviation);
-//		if (duration < minDeviation) {
-//			System.out.println("Task is finished early"); // Should be sent to the client-side
-//		}
-//		float maxDeviation = this.esitmatedDuration + (this.esitmatedDuration*this.acceptableDeviation);
-//		if (duration > maxDeviation) {
-//			System.out.println("Task is finished with a delay"); // Should be sent to the client-side
-//		}
-//		else {
-//			System.out.println("Task is finished on time"); // Should be sent to the client-side
-//		}
 	}
 	
 	/**
-	 * This function is called when a developer indicates a task as failed. It will create a timestamp and mark
+	 * This function is called when a developer indicates a task as failed. It will update the timeSpan and mark
 	 * 	the task as failed.
 	 */
 	public void failTask() {
@@ -182,7 +165,6 @@ public class Task {
 	public void updateDepStatus() {
 		for (Task waitingTask : waitingFor) {
 			boolean temp = true;
-			//if all tasks that waitinTask is waiting for are complete
 			for (Task dependentTask : waitingTask.dependsOn()) {
 				if (!dependentTask.finishedTask()) {
 					temp = false;
@@ -211,11 +193,4 @@ public class Task {
 			throw new IllegalArgumentException();
 		}
 	}
-	
-//	/**
-//	 * This function updates the time of a replaced task.
-//	 * @param time is the time the old task took until failed, so it must be added to the new time.
-//	 */
-//	public void updateTime(String time) {this.timeSpan.newTaskTime(time);}
-	
 }

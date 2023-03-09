@@ -2,7 +2,7 @@ package src;
 
 /**
  * The status of a project or task can be executing, failed or finished.
- *  The status of a task can also be waiting, and can also be available or unavailable.
+ *  The status of a task can also be waiting or pending.
  * @author vincent
  */
 public class Status {
@@ -12,17 +12,26 @@ public class Status {
 	 */
 	protected status myStatus;
 
+	/**
+	 * This documents "status".
+	 */
 	protected static enum status {
 		PENDING,WAITING,EXECUTING,FINISHED,FAILED;
 	}
 	
 	/**
-	 * This function will return the status of the task
+	 * Getter that returns the status of the task
 	 */
 	public status getStatus()  {return this.myStatus;}
 	
+	/**
+	 * Setter that marks a project/task as finished.
+	 */
 	public void finishStatus() {this.myStatus = status.FINISHED;}
 	
+	/**
+	 * Setter that marks a project/task as failed.
+	 */
 	public void failStatus() {this.myStatus = status.FAILED;} 
 	
 	/**
