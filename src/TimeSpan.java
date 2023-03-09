@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 
+import src.Status.status;
+
 /**
  * TODO The time spans can be used to assess the	estimated time allocated to tasks (to improve future project management).
  * 
@@ -15,21 +17,15 @@ public class TimeSpan {
 	/**
 	 * @contains the time the associated task was started; i.e. when a developer changed it's status to executing, is null before this.
 	 * @contains the time the associated task was ended; i.e. when a developer changed it's status to finished or failed, is null before this.
-	 * @contains the time that was worked on previous versions of the associated task.
-	 * @contains the associated task.
 	 */
-	private long extraTime;
 	private LocalTime startTime;
 	private LocalTime endTime;
-	private Task task;
 
 	/**
 	 * The constructor will start the clock and set the the time-collector for replaced tasks to zero.
 	 */
-	public TimeSpan(Task task) {
+	public TimeSpan() {
 		this.startTime = LocalTime.now();
-		this.extraTime = 0;
-		this.task = task;
 	}
 	
 	/* 
@@ -47,13 +43,13 @@ public class TimeSpan {
 	 * 
 	 * @pre task has to be in executing, finished or failed state
 	 */
-	public Duration getElapsedTime() {
-		if (this.task.executingTask()) {
+	public Duration getElapsedTime(status status) {
+		if (status.equals(status.EXECUTING)) {
 			LocalTime timeNow = LocalTime.now();
 			Duration elapsedTime = Duration.between(startTime, timeNow);
 			return elapsedTime;
 		}
-		else if (this.task.failedTask() || this.task.finishedTask()) {
+		else if (status.equals(status.FAILED) || status.equals(status.FINISHED)) {
 			return Duration.between(this.startTime, this.endTime);
 		}
 		else {

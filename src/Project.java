@@ -1,5 +1,6 @@
 package src;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ public class Project {
 	private String dueTime;
 	private List<Task> tasks;
 	private ProjectStatus status;
-	private long creationTime;
+	private TimeSpan timeSpan;
 
 	/**
 	 * @param The project will be instantiated with the given name.
@@ -27,8 +28,8 @@ public class Project {
 		this.name = name;
 		this.description = desc;
 		this.dueTime = dueTime;
-		this.status = new ProjectStatus(this);
-		this.creationTime = System.currentTimeMillis();
+		this.status = new ProjectStatus();
+		this.timeSpan = new TimeSpan();
 	};
 	
 	/**
@@ -110,7 +111,36 @@ public class Project {
 	}
 	
 	/**
-	 * This function returns all the tasks in this project.
+	 * Getter that returns all the tasks in this project.
 	 */
 	public List<Task> getTasks() {return this.tasks;}
+	
+	/**
+	 * Setter to indicate this project as finished.
+	 * @pre The project must be finished
+	 */
+	public void finishProject() {
+		if (finishedProject()) {
+			this.timeSpan.endTask();
+		}
+		else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	/**
+	 * Getter that returns the time the project was being executed.
+	 */
+	public Duration totalTimeProject() {return this.timeSpan.getElapsedTime(this.status.getStatus());}
+	
+	/**
+	 * Getter that returns the total time spent on all tasks.
+	 */
+	public List<Duration> totalTimeTasks() {
+		List<Duration> list = new ArrayList<Duration>();
+		for (Task t : this.tasks) {
+			list.add(t.spentTime());
+		}
+		return list;
+	}
 }

@@ -103,7 +103,7 @@ public class Task {
 			return false;
 		}
 		else {
-			this.timeSpan = new TimeSpan(this);
+			this.timeSpan = new TimeSpan();
 			this.performedBy = developer;
 			this.status.startTask();
 			return true;
@@ -174,6 +174,7 @@ public class Task {
 				waitingTask.status.freeTask();
 			}
 		}
+		this.timeSpan.getElapsedTime(this.status.getStatus());
 	}
 	
 	/**
@@ -187,7 +188,7 @@ public class Task {
 	 */
 	public Duration spentTime() {
 		if (!this.waitingTask() || !this.pendingTask() ) {
-			return this.timeSpan.getElapsedTime();
+			return this.timeSpan.getElapsedTime(this.status.getStatus());
 		}
 		else {
 			throw new IllegalArgumentException();

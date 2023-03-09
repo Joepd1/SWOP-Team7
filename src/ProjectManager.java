@@ -43,8 +43,6 @@ public class ProjectManager extends User {
 			throw new IllegalArgumentException();
 		}
 		else {
-//			String timeSpent = failedTask.spentTime();
-//			newTask.updateTime(timeSpent);
 			project.replace(failedTask, newTask);
 			
 			// This alternative task replaces the failed task with respect to
