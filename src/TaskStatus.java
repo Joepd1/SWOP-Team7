@@ -41,6 +41,18 @@ public class TaskStatus extends Status {
 	}
 	
 	/**
+	 * Getter to indicate if the task is pending or not
+	 */
+	public boolean isPending() {
+		if (this.status == "waiting" && this.available) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	/**
 	 * Getter to indicate if the task is waiting or not
 	 */
 	public boolean isWaiting() {

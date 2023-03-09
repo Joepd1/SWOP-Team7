@@ -1,5 +1,6 @@
 package src;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -22,9 +23,7 @@ public class Task {
 	private Project project;
 	private String description;
 	private int esitmatedDuration;
-	private float acceptableDeviation; // ->. A task can be finished early (even before the earliest acceptable
-		// deviation from the estimated duration), on time (within the acceptable deviation) or
-		// with a delay (even later than the latest acceptable deviation).
+	private float acceptableDeviation; 
 	private TaskStatus status;
 	private Developer performedBy;
 	private TimeSpan timeSpan;
@@ -116,27 +115,32 @@ public class Task {
 	/**
 	 * Getter that indicates if this task is finished.
 	 */
-	public boolean finishedTask() {return this.getStatus().isFinished();}
+	public boolean finishedTask() {return this.status.isFinished();}
 	
 	/**
 	 * Getter that indicates if this task is failed.
 	 */
-	public boolean failedTask() {return this.getStatus().isFailed();}
+	public boolean failedTask() {return this.status.isFailed();}
 	
 	/**
 	 * Getter that indicates if this task is executing.
 	 */
-	public boolean executingTask() {return this.getStatus().isExecuting();}
+	public boolean executingTask() {return this.status.isExecuting();}
 	
 	/**
 	 * Getter that indicates if this task is waiting.
 	 */
-	public boolean waitingTask() {return this.getStatus().isWaiting();}
+	public boolean waitingTask() {return this.status.isWaiting();}
 	
 	/**
 	 * Getter that indicates if this task is available.
 	 */
-	public boolean availableTask() {return this.getStatus().isAvailable();}
+	public boolean availableTask() {return this.status.isAvailable();}
+	
+	/**
+	 * Getter that indicates if this task is available.
+	 */
+	public boolean pendingTask() {return this.status.isPending();}
 	
 	/**
 	 * This function is called when a developer indicates a task as finished. It will update the statuses of the tasks
@@ -149,21 +153,21 @@ public class Task {
 		this.timeSpan.endTask();
 		updateDepStatus();
 			
-		String span = this.timeSpan.getTimeSpan();
-		String[] arrOfStr = span.split("h");
-		int duration = Integer.parseInt(arrOfStr[0]) * 60;
-		duration += Integer.parseInt(arrOfStr[1]);
-		float minDeviation = this.esitmatedDuration - (this.esitmatedDuration*this.acceptableDeviation);
-		if (duration < minDeviation) {
-			System.out.println("Task is finished early"); // Should be sent to the client-side
-		}
-		float maxDeviation = this.esitmatedDuration + (this.esitmatedDuration*this.acceptableDeviation);
-		if (duration > maxDeviation) {
-			System.out.println("Task is finished with a delay"); // Should be sent to the client-side
-		}
-		else {
-			System.out.println("Task is finished on time"); // Should be sent to the client-side
-		}
+//		String span = this.timeSpan.getTimeSpan();
+//		String[] arrOfStr = span.split("h");
+//		int duration = Integer.parseInt(arrOfStr[0]) * 60;
+//		duration += Integer.parseInt(arrOfStr[1]);
+//		float minDeviation = this.esitmatedDuration - (this.esitmatedDuration*this.acceptableDeviation);
+//		if (duration < minDeviation) {
+//			System.out.println("Task is finished early"); // Should be sent to the client-side
+//		}
+//		float maxDeviation = this.esitmatedDuration + (this.esitmatedDuration*this.acceptableDeviation);
+//		if (duration > maxDeviation) {
+//			System.out.println("Task is finished with a delay"); // Should be sent to the client-side
+//		}
+//		else {
+//			System.out.println("Task is finished on time"); // Should be sent to the client-side
+//		}
 	}
 	
 	/**
@@ -191,7 +195,7 @@ public class Task {
 				}
 			}
 			if (temp) { 
-				waitingTask.getStatus().setAvailability(true);;
+				waitingTask.status.setAvailability(true);;
 			}
 		}
 	}
@@ -205,22 +209,19 @@ public class Task {
 	 * This function returns the time that has been spent on this task. If the task is still being executed (2nd clause)
 	 * 	this time will not be final (will be different later on). If this task is finished or failed this time is final.
 	 */
-	public String spentTime() {
-		if (this.finishedTask() || this.getStatus().makeString() == "failed") {
-			return this.timeSpan.getTimeSpan();
-		}
-		else if (this.executingTask()) {
-			return this.timeSpan.getElapsedTime(this);
+	public Duration spentTime() {
+		if (!this.waitingTask() || !this.pendingTask() ) {
+			return this.timeSpan.getElapsedTime();
 		}
 		else {
-			return "This task hasn't been started yet.";
+			throw new IllegalArgumentException();
 		}
 	}
 	
-	/**
-	 * This function updates the time of a replaced task.
-	 * @param time is the time the old task took until failed, so it must be added to the new time.
-	 */
-	public void updateTime(String time) {this.timeSpan.newTaskTime(time);}
+//	/**
+//	 * This function updates the time of a replaced task.
+//	 * @param time is the time the old task took until failed, so it must be added to the new time.
+//	 */
+//	public void updateTime(String time) {this.timeSpan.newTaskTime(time);}
 	
 }
