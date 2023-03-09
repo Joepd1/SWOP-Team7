@@ -18,7 +18,7 @@ public class TimeSpan {
 	 * @contains the time the associated task was started; i.e. when a developer changed it's status to executing, is null before this.
 	 * @contains the time the associated task was ended; i.e. when a developer changed it's status to finished or failed, is null before this.
 	 */
-	private LocalTime startTime;
+	private final LocalTime startTime;
 	private LocalTime endTime;
 
 	/**

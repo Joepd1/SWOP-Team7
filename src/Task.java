@@ -20,14 +20,14 @@ public class Task {
 	 * @contains a list of the tasks that are waitingFor this task, i.e. the tasks that depend on this task
 	 * 
 	 */
-	private Project project;
-	private String description;
-	private int esitmatedDuration;
-	private float acceptableDeviation; 
+	private final Project project;
+	private final String description;
+	private final int esitmatedDuration;
+	private final float acceptableDeviation; 
 	private TaskStatus status;
 	private Developer performedBy;
 	private TimeSpan timeSpan;
-	private List<Task> dependsOnMe; // list that wait for me to finish
+	private final List<Task> dependsOnMe; // list that wait for me to finish
 	private List<Task> imWaitingFor; // list to be finished before i an begin
 	
 	/**

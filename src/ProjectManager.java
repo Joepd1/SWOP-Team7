@@ -16,11 +16,6 @@ import java.util.List;
  * @author vincent
  */
 public class ProjectManager extends User {
-	
-	/**
-	 * Contains the list of all projects this user is managing.
-	 */
-	private List<Project> projects;
 
 	/**
 	 * The constructor instantiates the super class (User) with the correct name.

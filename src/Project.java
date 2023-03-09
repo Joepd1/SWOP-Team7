@@ -12,9 +12,9 @@ import java.util.Map;
  */
 public class Project {
 	private HashMap<Task,List<Task>> dependencies; //Key depends on value
-	private String name;
-	private String description;
-	private String dueTime;
+	private final String name;
+	private final String description;
+	private final String dueTime;
 	private List<Task> tasks;
 	private ProjectStatus status;
 	private TimeSpan timeSpan;
