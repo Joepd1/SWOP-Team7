@@ -27,8 +27,8 @@ public class Task {
 	private TaskStatus status;
 	private Developer performedBy;
 	private TimeSpan timeSpan;
-	private List<Task> dependsOn;
-	private List<Task> waitingFor;
+	private List<Task> dependsOnMe; // list that wait for me to finish
+	private List<Task> imWaitingFor; // list to be finished before i an begin
 	
 	/**
 	 * @pre The User calling this must be a ProjectManager
@@ -46,8 +46,8 @@ public class Task {
 	 * @param waitingFor are the tasks that depend on this task.
 	 * 	the status of this task will be set as unavailable
 	 */
-	public Task(Project project, String description, int duration, float deviation, List<Task> dependsOn, List<Task> waitingFor) {		
-		if (project.finishedProject() || deviation >= 1.0 || deviation <= 0 || project.addTask(this, dependsOn)) {
+	public Task(Project project, String description, int duration, float deviation, List<Task> dependsOnMe, List<Task> imWaitingFor) {		
+		if (project.finishedProject() || deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
 			throw new IllegalArgumentException();
 		}
 		else {
@@ -56,18 +56,12 @@ public class Task {
 			this.esitmatedDuration = duration;
 			this.acceptableDeviation = deviation;
 			this.status = new TaskStatus();
-			this.dependsOn = dependsOn;
-			this.waitingFor = waitingFor;
+			this.dependsOnMe = dependsOnMe;
+			this.imWaitingFor = imWaitingFor;
 			boolean once = true;
-			for (Task task : dependsOn) {
-				if (once) {
-					//HIER MIWT NOG IETS
-					this.waitingFor.add(task);
+			for (Task task : this.imWaitingFor) {
+				if (!task.finishedTask()) {
 					this.status.haltTask();
-					once  = false;
-				}
-				else if (!finishedTask()) {
-					this.waitingFor.add(task);
 				}				
 			}
 		}
@@ -77,13 +71,13 @@ public class Task {
 	 * Getter that returns the task that must be completed before this task can be executed;
 	 * 	In other words this task depends on these tasks.
 	 */
-	public List<Task> dependsOn() {return this.dependsOn;}
+	public List<Task> waitingFor() {return this.imWaitingFor;}
 	
 	/**
 	 * Getter that returns the tasks that depend on this task;
 	 *  In other words the tasks that are waiting for this task to be finished.
 	 */
-	public List<Task> waitingFor() {return this.waitingFor;}
+	public List<Task> dependsOn() {return this.dependsOnMe;}
 	
 	/**
 	 * This function will be called when a developer chooses to execute this task and will initialize the field performedBy with the given developer. 
@@ -93,21 +87,15 @@ public class Task {
 	 * @param developer is the developer who chose to execute this task.
 	 */
 	public boolean startTask(Developer developer) {
-		boolean validStart = true;
-		for (Task t : waitingFor) {
+		for (Task t : imWaitingFor) {
 			if (!t.finishedTask()) {
-				validStart = false;
+				return false;
 			}
 		}
-		if (!validStart) {
-			return false;
-		}
-		else {
-			this.timeSpan = new TimeSpan();
-			this.performedBy = developer;
-			this.status.startTask();
-			return true;
-		}
+		this.timeSpan = new TimeSpan();
+		this.performedBy = developer;
+		this.status.startTask();
+		return true;
 	}
 	
 	/**
@@ -163,9 +151,9 @@ public class Task {
 	 * @param tasks is the list of tasks that depend on this task.
 	 */
 	public void updateDepStatus() {
-		for (Task waitingTask : waitingFor) {
+		for (Task waitingTask : dependsOnMe) {
 			boolean temp = true;
-			for (Task dependentTask : waitingTask.dependsOn()) {
+			for (Task dependentTask : waitingTask.waitingFor()) {
 				if (!dependentTask.finishedTask()) {
 					temp = false;
 				}
