@@ -58,7 +58,6 @@ public class Task {
 			this.status = new TaskStatus();
 			this.dependsOnMe = dependsOnMe;
 			this.imWaitingFor = imWaitingFor;
-			boolean once = true;
 			for (Task task : this.imWaitingFor) {
 				if (!task.finishedTask()) {
 					this.status.haltTask();
