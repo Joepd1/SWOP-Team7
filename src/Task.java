@@ -92,7 +92,7 @@ public class Task {
 	}
 	
 	/**
-	 * Setter to uodate the list of tasks that are waiting for this task to be
+	 * Setter to update the list of tasks that are waiting for this task to be
 	 * 	finished.
 	 * @param wait are the tasks that have to be added to this list.
 	 */
