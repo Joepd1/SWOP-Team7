@@ -10,51 +10,33 @@ public class Status {
 	/**
 	 * @contains the status of the associated object (project or task).
 	 */
-	protected String status;
+	protected status myStatus;
 
-	/**
-	 * This function will return the status of the task in String form
-	 */
-	public String makeString()  {return this.status;}
+	protected static enum status {
+		PENDING,WAITING,EXECUTING,FINISHED,FAILED;
+	}
 	
 	/**
-	 * This function changes the status of this task.
+	 * This function will return the status of the task
 	 */
-	public void setStatus(String status) {this.status = status;}
+	public status getStatus()  {return this.myStatus;}
+	
+	public void finishStatus() {this.myStatus = status.FINISHED;}
+	
+	public void failStatus() {this.myStatus = status.FAILED;} 
 	
 	/**
 	 * Getter to indicate if the task/project is completed or not
 	 */
-	public boolean isFinished() {
-		if (this.status == "finished") {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+	public boolean isFinished() {return this.myStatus.equals(status.FINISHED);}
 	
 	/**
 	 * Getter to indicate if the task/project is failed or not
 	 */
-	public boolean isFailed() {
-		if (this.status == "failed") {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+	public boolean isFailed() {return this.myStatus.equals(status.FAILED);}
 	
 	/**
 	 * Getter to indicate if the task/project is being executed or not
 	 */
-	public boolean isExecuting() {
-		if (this.status == "executing") {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+	public boolean isExecuting() {return this.myStatus.equals(status.EXECUTING);}
 }

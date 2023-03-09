@@ -61,9 +61,9 @@ public class Task {
 			boolean once = true;
 			for (Task task : dependsOn) {
 				if (once) {
+					//HIER MIWT NOG IETS
 					this.waitingFor.add(task);
-					this.status.setStatus("waiting");
-					this.status.setAvailability(false);
+					this.status.haltTask();
 					once  = false;
 				}
 				else if (!finishedTask()) {
@@ -105,8 +105,7 @@ public class Task {
 		else {
 			this.timeSpan = new TimeSpan(this);
 			this.performedBy = developer;
-			this.status.setAvailability(false);
-			this.status.setStatus("executing");
+			this.status.startTask();
 			developer.addTask(this);
 			return true;
 		}
@@ -131,11 +130,6 @@ public class Task {
 	 * Getter that indicates if this task is waiting.
 	 */
 	public boolean waitingTask() {return this.status.isWaiting();}
-	
-	/**
-	 * Getter that indicates if this task is available.
-	 */
-	public boolean availableTask() {return this.status.isAvailable();}
 	
 	/**
 	 * Getter that indicates if this task is available.
@@ -176,7 +170,7 @@ public class Task {
 	 */
 	public void failTask() {
 		this.timeSpan.endTask();
-		this.status.setStatus("failed");
+		this.status.failStatus();
 	}
 	
 	/**
@@ -195,7 +189,7 @@ public class Task {
 				}
 			}
 			if (temp) { 
-				waitingTask.status.setAvailability(true);;
+				waitingTask.status.freeTask();
 			}
 		}
 	}

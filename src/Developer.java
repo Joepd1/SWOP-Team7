@@ -58,7 +58,7 @@ public class Developer extends User {
 		}
 		//Task is waiting to be executed -> exec
 		else if (task.availableTask() && task.waitingTask()) {
-			if (status.makeString() != "executing" ) {
+			if (task.executingTask() ) {
 				throw new IllegalArgumentException();
 			}
 			else {

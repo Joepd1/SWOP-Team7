@@ -27,7 +27,7 @@ public class Project {
 		this.name = name;
 		this.description = desc;
 		this.dueTime = dueTime;
-		this.status = new ProjectStatus();
+		this.status = new ProjectStatus(this);
 		this.creationTime = System.currentTimeMillis();
 	};
 	
@@ -83,6 +83,9 @@ public class Project {
 		}
 		return true;		
 	}
+	
+	
+	//DEPENDENCIES AANPASSEN?
 	
 	/**
 	 * This function replaces the dependencies from old to new; In both the dependencies where the old task is depenendent

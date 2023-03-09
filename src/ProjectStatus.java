@@ -8,19 +8,22 @@ import java.util.List;
  */
 public class ProjectStatus extends Status {
 	
+	private Project project;
+	
 	/**
 	 * Constructs the status of the associated project and initializes it as executing
 	 */
-	public ProjectStatus() {
-		super.status = "executing";
+	public ProjectStatus(Project project) {
+		super.myStatus = status.EXECUTING;
+		this.project = project;
 	}
 	
 	/**
 	 * This function checks if all the tasks in the associated project are completed.
 	 *  Returns true if the latter is the case; false if at least one of those tasks are unfinished.
 	 */
-	public boolean projectFinished(Project project) {
-		for (Task t : project.getTasks()) {
+	public boolean projectFinished() {
+		for (Task t : this.project.getTasks()) {
 			if (!t.finishedTask()) {
 				return false;
 			}
