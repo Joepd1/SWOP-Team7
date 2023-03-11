@@ -47,7 +47,7 @@ public class Task {
 	 * 	the status of this task will be set as unavailable
 	 */
 	public Task(Project project, String description, int duration, float deviation, List<Task> dependsOnMe, List<Task> imWaitingFor) {		
-		if (project.finishedProject() || deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
+		if ( deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
 			throw new IllegalArgumentException();
 		}
 		else {
