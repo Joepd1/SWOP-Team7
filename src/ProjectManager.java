@@ -1,5 +1,6 @@
 package src;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import src.Status.status;
@@ -61,6 +62,22 @@ public class ProjectManager extends User {
 	}
 	
 	/**
+	 * Setter called by the controller to create a new project.
+	 * @param name contains the name of the to be created project; There can't exist a project with the same name.
+	 * @param desc contains the description of the to be created project.
+	 * @param dueTime contains the due time of the to be created project.
+	 */
+	public void createProject(String name, String desc, LocalDate dueTime) {
+		if (!super.loggedIn) {
+			throw new IllegalArgumentException();
+		}
+		for (Project project : this.projects) {
+			if (project.getName() == name) {
+				throw new IllegalArgumentException();
+			}
+		}
+		Project project = new Project(name, desc, dueTime);
+		this.projects.add(project);
 	 * Function to let a PM create a task.
 	 * @pre This PM must be logged in
 	 * @pre The project this PM wants to associate this task with, must be in executing state.
