@@ -52,13 +52,22 @@ public class ProjectManager extends User {
 		}
 	}
 	
+	/**
+	 * Setter called by the controller to create a new project.
+	 * @param name contains the name of the to be created project; There can't exist a project with the same name.
+	 * @param desc contains the description of the to be created project.
+	 * @param dueTime contains the due time of the to be created project.
+	 */
 	public void createProject(String name, String desc, LocalDate dueTime) {
 		if (!super.loggedIn) {
 			throw new IllegalArgumentException();
 		}
-		else {
-			Project project = new Project(name, desc, dueTime);
-			this.projects.add(project);
+		for (Project project : this.projects) {
+			if (project.getName() == name) {
+				throw new IllegalArgumentException();
+			}
 		}
+		Project project = new Project(name, desc, dueTime);
+		this.projects.add(project);
 	}
 }
