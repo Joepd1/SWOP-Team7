@@ -54,6 +54,12 @@ public class Project {
 	 * @param dependsOn are the dependencies of the new (previous parameter) task
 	 */
 	public boolean addTask(Task task, List<Task> dependsOn) { 
+		if (this.dependencies == null) {
+			this.dependencies.put(task, dependsOn);
+			this.tasks.add(task);
+			return true;
+		}
+		
 		HashMap<Task,List<Task>> newDependencies = (HashMap<Task,List<Task>>) this.dependencies.clone();
 		newDependencies.put(task, dependsOn);
 		if (!checkCycles(task, newDependencies)) {return false;}
