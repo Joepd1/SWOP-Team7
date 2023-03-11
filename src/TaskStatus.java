@@ -1,40 +1,45 @@
 package src;
 
 /**
- * 
+ * Each instance of this class represents the status of a task.
+ * @invar | getStatus() != null
  * @author vincent
  */
 public class TaskStatus extends Status {
 	
 	/**
-	 * Constructs the status of the associated Task and initializes it as pending.
+	 * Initializes this object so that it can represent the status of the associated task.
+	 * @post | getStatus() == status.PENDING
 	 */
 	public TaskStatus() {
 		super.myStatus = status.PENDING;
 	}
 	
 	/**
-	 * Getter to indicate if the task is pending or not.
+	 * @basic
 	 */
 	public boolean isPending() {return super.myStatus.equals(status.PENDING);}
 	
 	/**
-	 * Getter to indicate if the task is waiting or not.
+	 * @basic
 	 */
 	public boolean isWaiting() {return super.myStatus.equals(status.WAITING);}
 
 	/**
-	 * Setter to indicate the execution of a task.
+	 * Sets the status of the associated task to executing.
+	 * @post | getStatus() == status.EXECUTING
 	 */
 	public void startTask() {super.myStatus = status.EXECUTING;}
 		
 	/**
-	 * Setter to indicate that a task has to wait on another one to be finished.
+	 * Sets the status of the associated task to waiting.
+	 * @post | getStatus() == status.WAITING
 	 */
 	public void haltTask() {super.myStatus = status.WAITING;}
 	
 	/**
-	 * Setter to indicate that a task can be chosen by a developer to be executed.
+	 * Sets the status of the associated task to pending.
+	 * @post | getStatus() == status.PENDING
 	 */
 	public void freeTask() {super.myStatus = status.PENDING;}
 }

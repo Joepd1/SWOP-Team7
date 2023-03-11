@@ -2,21 +2,22 @@ package src;
 
 
 /**
- * 
+ * Each instance of this class represents a User. A user can be a Project Manager or a Developer.
+ * @invar | getName() != null
  * @author vincent
  */
-public class User {
+public abstract class User {
 	
 	/**
-	 * @contains the name of the associated user.
-	 * @contains a boolean indicating if this user is logged in or not.
+	 * @invar | name != null
 	 */
 	protected String name;
 	protected boolean loggedIn;
 	
 	/**
 	 * Setter that indicates the loggedIn boolean as true; i.e. the user is logged in
-	 * @pre The user must be logged out.
+	 * @throws IllegalArgumentException | loggedIn == True
+	 * @post | isLoggedIn() == True
 	 */
 	public void logIn() {
 		if (this.loggedIn) {
@@ -29,7 +30,8 @@ public class User {
 	
 	/**
 	 * Setter that indicates the loggedIn boolean as false; i.e. the user is logged out
-	 * @pre The user must be logged in.
+	 * @throws IllegalArgumentException | loggedIn == False
+	 * @post | isLoggedIn() == False
 	 */
 	public void logOut() {
 		if (!this.loggedIn) {
@@ -41,8 +43,12 @@ public class User {
 	}
 	
 	/**
-	 * Getter that returns the state of the user; Is he logged in or not?
+	 * @basic
 	 */
 	public boolean isLoggedIn() {return this.loggedIn;}
 	
+	/**
+	 * @basic
+	 */
+	public String getName() {return this.name;}
 }

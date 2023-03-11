@@ -7,10 +7,27 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 
+ * Each instance of this class represents a project.
+ * @invar | getName() != null
+ * @invar | getDescription() != null
+ * @invar | getDueTime() != null
+ * @invar | getStatus() != null
+ * @invar | getTimeSpan() != null
+ * @invar | getDependencies() != null
+ * @invar | getTasks() != null
  * @author vincent
  */
 public class Project {
+	
+	/**
+	 * @invar | name != null
+	 * @invar | description != null
+	 * @invar | dueTime != null
+	 * @invar | status != null
+	 * @invar | timeSpan != null
+	 * @invar | dependencies != null
+	 * @invar | tasks != null
+	 */
 	private HashMap<Task,List<Task>> dependencies; //Key depends on value
 	private final String name;
 	private final String description;
@@ -20,9 +37,18 @@ public class Project {
 	private TimeSpan timeSpan;
 
 	/**
-	 * @param The project will be instantiated with the given name.
-	 * @param The project will be instantiated with the given description.
-	 * @param The project will be instantiated with the given due time.
+	 * Initializes this object so it can represent a project, whose name is the given name, description is th given description
+	 * 	and due time is the given due time.
+	 * @pre The User calling this must be a project manager.
+	 * Each instance of this class represents a project.
+	 * @invar | getName() == name
+	 * @invar | getDescription() == desc
+	 * @invar | getDueTime() == dueTime
+	 * @invar | getStatus() == status.EXECUTING
+	 * @invar | totalTimeProject().toMinutes() == 0
+	 * @invar | totalTimeTasks().toMinuts() == 0
+	 * @invar | getDependencies().size() == 0
+	 * @invar | getTasks().size() == 0
 	 */
 	public Project(String name, String desc, Duration dueTime) {
 		this.name = name;
@@ -35,9 +61,7 @@ public class Project {
 	};
 	
 	/**
-	 * Checks every task associated with this project; if one isn't marked as finished the project can't be
-	 * 	finished so returns false; if every task is finished the project will be finished and this will 
-	 * 	return true.
+	 * @basic
 	 */
 	public boolean finishedProject() {
 		for (Task t : this.tasks) {
@@ -94,8 +118,9 @@ public class Project {
 	/**
 	 * This function replaces the dependencies from old to new; In both the dependencies where the old task is depenendent
 	 * 	as where the old task is the dependant.
-	 * @param oldTask is the task that was marked as failed
-	 * @param newTask is the task that replaces the failed task
+	 * @post | newTask.dependsOn() == oldTask.dependsOn()
+	 * @post | newTask.waitingFor() == oldTask.waitingFor()
+	 * @post | Every occurrence of oldTask is changed to newTask in dependencies
 	 */
 	public void replace(Task oldTask, Task newTask) {
 		newTask.addDepending(oldTask.dependsOn());
@@ -116,38 +141,44 @@ public class Project {
 	}
 	
 	/**
-	 * Getter that returns all the tasks in this project.
+	 * @basic
 	 */
 	public List<Task> getTasks() {return this.tasks;}
 	
 	/**
-	 * Getter that returns the name of this project.
+	 * @basic
 	 */
 	public String getName() {return this.name;}
 
 	/**
-	 * Getter that returns the description of this project.
+	 * @basic
 	 */
 	public String getDescription() {return this.description;}
 
 	/**
-	 * Getter that returns the due time of this project.
+	 * @basic
 	 */
 	public Duration getDueTime() {return this.dueTime;}
 
 	/**
-	 * Getter that returns the status of this project.
+	 * @basic
 	 */
 	public ProjectStatus getStatus() {return this.status;}
 
 	/**
-	 * Getter that returns the time span of this project.
+	 * @basic
 	 */
 	public TimeSpan getTimeSpan() {return this.timeSpan;}
 	
 	/**
-	 * Setter to indicate this project as finished.
-	 * @pre The project must be finished
+	 * @basic
+	 */
+	public HashMap<Task, List<Task>> getDependencies() {return this.dependencies;}
+	
+	/**
+	 * Set's the status of this project as finished.
+	 * @throws IllegalArgumentException | !finishedProject()
+	 * @post | getStatus() == status.FINISHED
 	 */
 	public void finishProject() {
 		if (finishedProject()) {
@@ -160,11 +191,13 @@ public class Project {
 	
 	/**
 	 * Getter that returns the time the project was being executed.
+	 * @basic
 	 */
 	public Duration totalTimeProject() {return this.timeSpan.getElapsedTime(this.status);}
 	
 	/**
 	 * Getter that returns the total time spent on all tasks.
+	 * @basic
 	 */
 	public Duration totalTimeTasks() {
 		Duration temp = Duration.ZERO;

@@ -4,33 +4,35 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
+ * Each instance of this class represents a developer.
+ * @invar | getTasks() != null
  * @author vincent
  */
 public class Developer extends User {
 
 	/**
-	 * @contains the list of tasks this developer has worked/is working in.
+	 * @invar | tasks != null
 	 */
 	private List<Task> tasks;
 	
 	/**
-	 * The constructor instantiates the super class (User) with the correct name.
-	 * @param name is the name of the user.
+	 * Initializes this object so that it's name is the given name and it's list of tasks is created.
+	 * @post | getTasks().size() == 0
 	 */
 	public Developer(String name) {
 		super.name = name;
+		this.tasks = new ArrayList<Task>();
 	}
 	
 	/**
 	 * This function enables a developer to change the status of a task he is executing.
 	 *  A task that is being executed can only be put in failed or finished state; and one
 	 *  that isn't being executed can't be altered.
-	 *  
-	 * @pre The developer (this) that calls this function must be working on the task 
-	 * 	he want's to change the status of. 
-	 * @param task is the specific task the developer want's to change the status of.
-	 * @param status is the specific status the developer want's to change the status
-	 * 	of the task into
+	 * @throws IllegalArgumentException | !this.tasks.contains(task) || !super.loggedIn
+	 * @throws IllegalArgumentException | status.isFailed() || status.isFinished() || status.isWaiting()
+	 * @throws IllegalArgumentException | !task.executingTask() || !task.pendingTask()
+	 * @post | if (old{task}.executingTask()) then (new{task}.failedTask || new{task}.finishedTask)
+	 * @post | if (old{task}.pendingTask()) then new{task}.executingTask()
 	 */
 	public void updateTaskStatus(Task task, Status status) {
 		if (!this.tasks.contains(task) || !super.loggedIn) {
@@ -61,21 +63,16 @@ public class Developer extends User {
 	 */
 	public List<Task> getMyTasks() {
 		List<Task> availableTasks = new ArrayList<Task>();
-		if (this.tasks.size() == 0) {
-			return availableTasks;
-		}
-		else {
-			for (Task task : this.tasks) {
-				if (task.executingTask() || task.pendingTask()) {
-					availableTasks.add(task);
-				}
+		for (Task task : this.tasks) {
+			if (task.executingTask() || task.pendingTask()) {
+				availableTasks.add(task);
 			}
-			return availableTasks;
 		}
+		return availableTasks;
 	}
 	
 	/**
-	 * Getter that returns the tasks this developer is associated with.
+	 * @basic
 	 */
 	public List<Task> getAllTasks() {
 		return this.tasks;

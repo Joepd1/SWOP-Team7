@@ -1,14 +1,12 @@
 package src;
 
 /**
- * The status of a project or task can be executing, failed or finished.
- *  The status of a task can also be waiting or pending.
  * @author vincent
  */
-public class Status {
+public abstract class Status {
 
 	/**
-	 * @contains the status of the associated object (project or task).
+	 * @invar | myStatus != null
 	 */
 	protected status myStatus;
 
@@ -20,32 +18,34 @@ public class Status {
 	}
 	
 	/**
-	 * Getter that returns the status of the task
+	 * @basic
 	 */
 	public status getStatus()  {return this.myStatus;}
 	
 	/**
-	 * Setter that marks a project/task as finished.
+	 * Sets the Item's status as finished.
+	 * @post | getStatus() == status.FINISHED
 	 */
 	public void finishStatus() {this.myStatus = status.FINISHED;}
 	
 	/**
-	 * Setter that marks a project/task as failed.
+	 * Sets the Item's status as failed.
+	 * @post | getStatus() == status.FAILED
 	 */
 	public void failStatus() {this.myStatus = status.FAILED;} 
 	
 	/**
-	 * Getter to indicate if the task/project is completed or not
+	 * @basic
 	 */
 	public boolean isFinished() {return this.myStatus.equals(status.FINISHED);}
 	
 	/**
-	 * Getter to indicate if the task/project is failed or not
+	 * @basic
 	 */
 	public boolean isFailed() {return this.myStatus.equals(status.FAILED);}
 	
 	/**
-	 * Getter to indicate if the task/project is being executed or not
+	 * @basic
 	 */
 	public boolean isExecuting() {return this.myStatus.equals(status.EXECUTING);}
 }

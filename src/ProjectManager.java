@@ -4,33 +4,26 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import src.Status.status;
-
-
-//TODO: 	
-// ADVANCE TIME
-// START UP
-// CREATE PROJECT	
-// CREATE TASK
-// (LOG IN & OUT ?)
-// SHOW PROJECTS
-
 /**
- * 
+ * Each instance of this class represents a project manager.
+ * @invar | getProjects() != null
+ * @invar | getCreatedTasks() != null
  * @author vincent
  */
 public class ProjectManager extends User {
 	
 	/**
-	 * @contains the list of all projects this user is managing.
+	 * @invar | projects != null
+	 * @invar | createdTasks != null
 	 */
 	private List<Project> projects;
 	private List<Task> createdTasks;
 	
 	
 	/**
-	 * The constructor instantiates the super class (User) with the correct name.
-	 * @param name is the name of the user.
+	 * Initializes this object so that it's name is the given name.
+	 * @post | getProjects().size() == 0
+	 * @post | getCreatedTasks().size() == 0
 	 */
 	public ProjectManager(String name) {
 		super.name = name;
@@ -39,20 +32,24 @@ public class ProjectManager extends User {
 	}
 
 	/**
-	 * Getter that returns all the projects this user is associated with.
-	 * @pre the user is logged in.
+	 * @basic
 	 */
 	public List<Project> getProjects() {return this.projects;}
 	
 	/**
+	 * @basic
+	 */
+	public List<Task> getCreatedTasks() {return this.createdTasks;}
+	
+	/**
 	 * This function will update the given project; It will get the necessary info of the failed task and update the new
 	 * 	one accordingly.
-	 * @param project is the project that must be updated
-	 * @param failedTask is the task that has failed and therefore must be updated
-	 * @param newTask is the task that must replace the failed task in the given project.
+	 * @throws IllegalArgumentException | !failedTask.failedTask() || !this.projects.contains(project) || (!newTask.waitingTask() || !newTask.pendingTask())
+	 * @post | failedTask.dependsOn() == newTask.dependsOn()
+	 * @post | failedTask.waitingFor() == newTask.waitingFor()
 	 */
 	public void replaceTask (Project project, Task failedTask, Task newTask) {
-		if (!failedTask.failedTask() || !this.projects.contains(project) || !this.createdTasks.contains(failedTask) || !this.createdTasks.contains(newTask)) {
+		if (!failedTask.failedTask() || !this.projects.contains(project) || (!newTask.waitingTask() || !newTask.pendingTask())) {
 			throw new IllegalArgumentException();
 		}
 		else {
@@ -63,7 +60,8 @@ public class ProjectManager extends User {
 	/**
 	 * Setter to advance the system time.
 	 * @pre The Project Manager must be logged in.
-	 * @param time is the time this project manager wants to advance the system time with.
+	 * @throws IllegalArgumentException | !super.loggedIn
+	 * @post | new{Clock.getSystemTime()} == old{Clock.getSystemTime()} + Duration.ofMinutes(time)
 	 */
 	public void advanceTime(int time) {
 		if (!super.loggedIn) {
@@ -76,10 +74,14 @@ public class ProjectManager extends User {
 	}
 	
 	/**
-	 * Setter called by the controller to create a new project.
-	 * @param name contains the name of the to be created project; There can't exist a project with the same name.
-	 * @param desc contains the description of the to be created project.
-	 * @param dueTime contains the due time of the to be created project.
+	 * Setter called by the controller to create a new project with the given parameters.
+	 * @throws IllegalArgumentException | !super.loggedIn
+	 * @throws IllegalArgumentException | There exists a project with the given name
+	 * @post | project != null
+	 * @post | project.getName() == name
+	 * @post | project.getDescription() == desc
+	 * @post | project.getDueTime() == dueTime
+	 * @post | new{projects} = old{projects}.add(project)
 	 */
 	public void createProject(String name, String desc, Duration dueTime) {
 		if (!super.loggedIn) {
@@ -95,19 +97,18 @@ public class ProjectManager extends User {
 	}
 	
 	/**
-	 * Function to let a PM create a task.
-	 * @pre This PM must be logged in
-	 * @pre The project this PM wants to associate this task with, must be in executing state.
-	 * 
-	 * @param project is the project this PM wants to associate this task with.
-	 * @param description is the description of this task.
-	 * @param duration is the estimated duration of the task.
-	 * @param deviation is the acceptable deviation of the time of execution of the task.
-	 * @param dependsOnMe are the tasks that depend on this task.
-	 * @param imWaitingFor are the tasks that this task depends on; If one isn't finished, this task can't start.
+	 * Setter called by the controller to create a new task with the given parameters.
+	 * @throws IllegalArgumentException | !super.loggedIn || !project.getStatus().isExecuting() || project == null
+	 * @post | task != null
+	 * @post | task.getProject() == project
+	 * @post | task.getDescription() == description
+	 * @post | task.getEstimatedDuration() == duration
+	 * @post | task.getAcceptableDeviation() == deviation
+	 * @post | task.waitingFor() == imWaitingFor
+	 * @post | new{createdTasks} = old{createdTasks}.add(task)
 	 */
 	public void createTask(Project project, String description, int duration, double deviation, List<Task> imWaitingFor) {
-		if (!super.loggedIn || !project.getStatus().isExecuting()) {
+		if (!super.loggedIn || project == null || !project.getStatus().isExecuting()) {
 			throw new IllegalArgumentException();
 		}
 		Task task = new Task(project, description, duration, deviation, imWaitingFor);

@@ -3,30 +3,32 @@ package src;
 import java.time.Duration;
 
 /**
- * TODO The time spans can be used to assess the	estimated time allocated to tasks (to improve future project management).
- * 
+ * Each instance of this class represents the TimeSpan of an Item. An item can be a project or a task. 
+ * @invar | getStartTime() != null
  * @author vincent
  */
 public class TimeSpan {
 	
 	/**
-	 * @contains the time the associated task was started; i.e. when a developer changed it's status to executing, is null before this.
-	 * @contains the time the associated task was ended; i.e. when a developer changed it's status to finished or failed, is null before this.
+	 * @invar | startTime != null
+	 * @invar | if (Item.isFinished() || Item.isFailed()) then endTime != null
+	 * 			else endTime == null
 	 */
 	private Duration startTime;
 	private Duration endTime;
 
 	/**
-	 * The constructor will start the clock and set the the time-collector for replaced tasks to zero.
+	 * Initializes this object so that it can represent the timings of an Item.
+	 * @post | getStartTime() != null
 	 */
 	public TimeSpan() {
 		this.startTime = Clock.getSystemTime();
 	}
 	
-	/* 
-	 * This function will calculate the time that was needed to execute a task and will update the timestamp accordingly.
-	 * 
-	 * @pre The task/project must be finished or failed.
+	/**
+	 * Sets this timeSpan's end time.
+	 * @pre The item must be finished or failed.
+	 * @post | endTime() != null
 	 */
 	public void endTime() {
 		this.endTime = Clock.getSystemTime();
@@ -35,8 +37,7 @@ public class TimeSpan {
 	/** 
 	 * This function will calculate the time that was needed until now to try and execute or execute the associated task 
 	 *  and will return the according Duration.
-	 * 
-	 * @pre task has to be in executing, finished or failed state
+	 * @throws IllegalArgumentExxception | status.isWaiting() || status.isPending()
 	 */
 	public Duration getElapsedTime(Status status) {
 		if (status.isExecuting()) {

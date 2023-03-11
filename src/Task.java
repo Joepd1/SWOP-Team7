@@ -4,21 +4,24 @@ import java.time.Duration;
 import java.util.List;
 
 /**
+ * Each instance of this class represents a task.
+ * @invar | getStatus() != null
+ * @invar | getDescription() != null
+ * @invar | getEstimatedDuration() != null
+ * @invar | getAcceptableDeviation() != null
+ * @invar | getProject() != null
+ * @invar | waitingFor() != null
  * @author vincent
  */
 public class Task {
 	
 	/**
-	 * @contains the project that this task is a part of
-	 * @contains the description of the task
-	 * @contains the estimated duration of execution of the task
-	 * @contains the acceptable deviation of the time of execution of the task
-	 * @contains the task's status
-	 * @contains the developer that is performing this task (is null at creation, but initialized after the function startTask())
-	 * @contains the timeSpan of this task (is null at creation, but initialized after the function startTask())
-	 * @contains a list of all the tasks that this task depends on
-	 * @contains a list of the tasks that are waitingFor this task, i.e. the tasks that depend on this task
-	 * 
+	 * @invar | status != null
+	 * @invar | description != null
+	 * @invar | estimatedDuration != null
+	 * @invar | acceptableDeviation != null
+	 * @invar | project != null
+	 * @invar | waitingFor != null
 	 */
 	private final Project project;
 	private final String description;
@@ -31,19 +34,22 @@ public class Task {
 	private List<Task> imWaitingFor; // list to be finished before i an begin
 	
 	/**
+	 * Initializes this object so it can represent a task, whose associated project is the given project, description is the given description,
+	 * 	duration is the given duration, deviation is the given deviation, status is waiting or pending and whose tasks that must be completed
+	 * 	before this task can be executed the given imWaitingFor is.
 	 * @pre The User calling this must be a ProjectManager
-	 * 
-	 * @pre The given project must be unfinished
-	 * @pre The given deviation must be a percentage; so greater than or equal to zero and smaller than or
-	 * 	equal to one.
-	 * @pre The task can't give a cycle in the dependency graph
-	 * 
-	 * @param project is the project that this task is a part of
-	 * @param description is the description of the task
-	 * @param duration is the time the PM thinks is needed for the task
-	 * @param deviation is the percentage of acceptable deviation in completion time
-	 * @param imWaitingFor are the tasks that this task depend on, if one of these tasks isn't marked as finished, this task can't be started
-	 * 	the status of this task will be set as unavailable
+	 * @throws IllegalArgumentException | project == null
+	 * @throws IllegalArgumentException | description == null
+	 * @throws IllegalArgumentException | duration == null
+	 * @throws IllegalArgumentException | deviation == null || deviation < 0 || deviation > 1
+	 * @throws IllegalArgumentException | imWaitingFor == null
+	 * @throws IllegalArgumentException | this and imWaitingFor cause a cycle in the dependency graph of project
+	 * @post | getStatus() == status.PENDING || getStatus() == status.WAITING
+	 * @post | getDescription() == description
+	 * @post | getEstimatedDuration() == duration
+	 * @post | getAcceptableDeviation() == deviation
+	 * @post | getProject() == project
+	 * @post | waitingFor() == imWaitingFor
 	 */
 	public Task(Project project, String description, int duration, double deviation, List<Task> imWaitingFor) {		
 		if (deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
@@ -70,91 +76,90 @@ public class Task {
 	}
 	
 	/**
-	 * Getter that returns the task that must be completed before this task can be executed;
-	 * 	In other words this task depends on these tasks.
-	 */
-	public List<Task> waitingFor() {return this.imWaitingFor;}
-	
-	/**
-	 * Getter that returns the tasks that depend on this task;
-	 *  In other words the tasks that are waiting for this task to be finished.
-	 */
-	public List<Task> dependsOn() {return this.dependsOnMe;}
-	
-	/**
 	 * Setter to update the list of tasks that depend on this task.
-	 * @param dep are the tasks that have to be added to this list.
+	 * @throws IllegalArgumentException() | dep == null
+	 * @post | new{dependsOn()} == old{dependsOn()}.addAll(dep)
 	 */
 	public void addDepending(List<Task> dep) {
-		for (Task t : dep) {
-			if (!this.dependsOnMe.contains(t)) {
-				this.dependsOnMe.add(t);
-			}
+		if (dep == null) {
+			throw new IllegalArgumentException();
+		}
+		else {
+			this.dependsOnMe.addAll(dep);
 		}
 	}
 	
 	/**
-	 * Setter to update the list of tasks that are waiting for this task to be
-	 * 	finished.
-	 * @param wait are the tasks that have to be added to this list.
+	 * Setter to update the list of tasks that are waiting for this task to be finished.
+	 * @throws IllegalArgumentException() | wait == null
+	 * @post | new{imWaitingFor()} == old{imWaitingFor()}.addAll(wait)
 	 */
 	public void addWaiting(List<Task> wait) {
-		for (Task t : wait) {
-			if (!this.imWaitingFor.contains(t)) {
-				this.imWaitingFor.add(t);
-			}
+		if (wait == null) {
+			throw new IllegalArgumentException();
+		}
+		else {
+			this.imWaitingFor.addAll(wait);
 		}
 	}
 	
 	/**
 	 * This function will be called when a developer chooses to execute this task and will initialize the field performedBy with the given developer. 
-	 *  It also starts the timer and sets the status to unavailable & executing.
-	 *  
 	 * @pre can only be executed by a developer
-	 * @param developer is the developer who chose to execute this task.
+	 * @throws IllegalArgumentException | developer == null
+	 * @post | executingTask() || waitingTask()
+	 * @post | getTimeSpan() != null
+	 * @post | performedBy() != null
 	 */
 	public boolean startTask(Developer developer) {
-		for (Task t : imWaitingFor) {
-			if (!t.finishedTask()) {
-				return false;
-			}
+		if (developer == null) {
+			throw new IllegalArgumentException();
 		}
-		this.timeSpan = new TimeSpan();
-		this.performedBy = developer;
-		this.status.startTask();
-		return true;
+		else {
+			for (Task t : imWaitingFor) {
+				if (!t.finishedTask()) {
+					return false;
+				}
+			}
+			this.timeSpan = new TimeSpan();
+			this.performedBy = developer;
+			this.status.startTask();
+			return true;
+		}
 	}
 	
 	/**
-	 * Getter that indicates if this task is finished.
+	 * @basic
 	 */
 	public boolean finishedTask() {return this.status.isFinished();}
 	
 	/**
-	 * Getter that indicates if this task is failed.
+	 * @basic
 	 */
 	public boolean failedTask() {return this.status.isFailed();}
 	
 	/**
-	 * Getter that indicates if this task is executing.
+	 * @basic
 	 */
 	public boolean executingTask() {return this.status.isExecuting();}
 	
 	/**
-	 * Getter that indicates if this task is waiting.
+	 * @basic
 	 */
 	public boolean waitingTask() {return this.status.isWaiting();}
 	
 	/**
-	 * Getter that indicates if this task is available.
+	 * @basic
 	 */
 	public boolean pendingTask() {return this.status.isPending();}
 	
 	/**
-	 * This function is called when a developer indicates a task as finished. It will update the statuses of the tasks
-	 * 	that are waiting for this task to be finished to available (if this is possible) and update the timeSpan.
-	 * 
+	 * This function is called when a developer indicates a task as finished. It will check if it's possible to 
+	 * 	free up tasks that depend on this task.
 	 * @pre The task is indicated as finished
+	 * @pre This function is called by a developer.
+	 * @post | timeSpan.getEndTime() != null
+	 * @post | isFinished()
 	 */
 	public void finishTask() {
 		this.timeSpan.endTime();
@@ -163,8 +168,11 @@ public class Task {
 	}
 	
 	/**
-	 * This function is called when a developer indicates a task as failed. It will update the timeSpan and mark
-	 * 	the task as failed.
+	 * This function is called when a developer indicates a task as failed.
+	 * @pre The task is indicated as failed.
+	 * @pre This function is called by a developer.
+	 * @post | timeSpan.getEndTime() != null
+	 * @post | isFailed()
 	 */
 	public void failTask() {
 		this.timeSpan.endTime();
@@ -172,10 +180,8 @@ public class Task {
 	}
 	
 	/**
-	 * This function updates the status of all the tasks that depend on this task.
-	 * 
+	 * This function updates the status of all the tasks that depend on this task, if this task is finished.
 	 * @pre This task is finished
-	 * @param tasks is the list of tasks that depend on this task.
 	 */
 	public void updateDepStatus() {
 		for (Task waitingTask : dependsOnMe) {
@@ -192,50 +198,53 @@ public class Task {
 	}
 	
 	/**
-	 * This function returns the status of this task
+	 * @basic
 	 */
 	public TaskStatus getStatus() {return this.status;}
 
 	/**
-	 * This function returns the description of this task
+	 * @basic
 	 */
 	public String getDescription() {return this.description;}
 
 	/**
-	 * This function returns the estimated duration of this task
+	 * @basic
 	 */
 	public int getEstimatedDuration() {return this.estimatedDuration;}
 
 	/**
-	 * This function returns the acceptable deviation of this task
+	 * @basic
 	 */
 	public double getAcceptableDeviation() {return this.acceptableDeviation;}
 
 	/**
-	 * This function returns the developer who is performing this task.
-	 * 	Returns null if the status of this task is PENDING or WAITING
+	 * @basic
 	 */
 	public Developer getDeveloper() {return this.performedBy;}
 
 	/**
-	 * This function returns the time span of this task
+	 * @basic
 	 */
 	public TimeSpan getTimeSpan() {return this.timeSpan;}
-
-	/**
-	 * This function returns the tasks that depend on this task
-	 */
-	public List<Task> getDependecies() {return this.dependsOnMe;}
 	
 	/**
-	 * This function returns the project that is associated with this task
+	 * @basic
 	 */
 	public Project getProject() {return this.project;}
 	
+	/**
+	 * @basic
+	 */
+	public List<Task> waitingFor() {return this.imWaitingFor;}
 	
 	/**
-	 * This function returns the time that has been spent on this task. If the task is still being executed (2nd clause)
-	 * 	this time will not be final (will be different later on). If this task is finished or failed this time is final.
+	 * @basic
+	 */
+	public List<Task> dependsOn() {return this.dependsOnMe;}
+	
+	/**
+	 * This function returns the time that has been spent on this task. 
+	 * @throws IllegalArgumentException | !waitingTask() || !pendingTask()
 	 */
 	public Duration spentTime() {
 		if (!this.waitingTask() || !this.pendingTask() ) {
