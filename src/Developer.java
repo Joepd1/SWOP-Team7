@@ -3,8 +3,6 @@ package src;
 import java.util.List;
 import java.util.ArrayList;
 
-import src.Status.status;
-
 /**
  * TODO: (LOGIN & LOGOUT ?)
  * @author vincent
