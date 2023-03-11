@@ -48,15 +48,22 @@ public class Developer extends User {
 	 * @param status is the specific status the developer want's to change the status
 	 * 	of the task into
 	 */
-	public void updateTaskStatus(Task task, status status) {
-		if (!this.tasks.contains(task) || (!task.executingTask() || !task.pendingTask()) || !super.loggedIn) {
+	public void updateTaskStatus(Task task, Status status) {
+		if (!this.tasks.contains(task) || !super.loggedIn) {
 			throw new IllegalArgumentException();
 		}
-		else if (status.isFailed()) {
-			task.failTask();
+		else if (task.executingTask()) {
+			if (status.isFailed()) {
+				task.failTask();
+			}
+			else if (status.isFinished()) {
+				task.finishTask();
+			}
 		}
-		else if (status.equals(status.FINISHED)) {
-			task.finishTask();
+		else if (task.pendingTask()) {
+			if (status.isExecuting()) {
+				task.startTask(this);
+			}
 		}
 		else {
 			throw new IllegalArgumentException();
