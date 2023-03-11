@@ -1,5 +1,6 @@
 package src;
 
+import java.time.Duration;
 import java.util.List;
 
 
@@ -49,6 +50,21 @@ public class ProjectManager extends User {
 			// dependency management or determining the project status (ongoing or finished).
 			// The time spent on the failed task is however counted for the total execution time of
 			// the project. 
+		}
+	}
+	
+	/**
+	 * Setter to advance the system time.
+	 * @pre The Project Manager must be logged in.
+	 * @param time is the time this project manager wants to advance the system time with.
+	 */
+	public void advanceTime(int time) {
+		if (!super.loggedIn) {
+			throw new IllegalArgumentException();
+		}
+		else {
+			Duration timeToAdvanceInMinutes = Duration.ofMinutes(time);
+			Clock.advanceTime(timeToAdvanceInMinutes);
 		}
 	}
 }
