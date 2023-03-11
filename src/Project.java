@@ -122,6 +122,31 @@ public class Project {
 	public List<Task> getTasks() {return this.tasks;}
 	
 	/**
+	 * Getter that returns the name of this project.
+	 */
+	public String getName() {return this.name;}
+
+	/**
+	 * Getter that returns the description of this project.
+	 */
+	public String getDescription() {return this.description;}
+
+	/**
+	 * Getter that returns the due time of this project.
+	 */
+	public LocalDate getDueTime() {return this.dueTime;}
+
+	/**
+	 * Getter that returns the status of this project.
+	 */
+	public ProjectStatus getStatus() {return this.status;}
+
+	/**
+	 * Getter that returns the time span of this project.
+	 */
+	public TimeSpan getTimeSpan() {return this.timeSpan;}
+	
+	/**
 	 * Setter to indicate this project as finished.
 	 * @pre The project must be finished
 	 */
