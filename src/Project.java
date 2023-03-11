@@ -15,7 +15,7 @@ public class Project {
 	private HashMap<Task,List<Task>> dependencies; //Key depends on value
 	private final String name;
 	private final String description;
-	private final LocalDateTime dueTime;
+	private final Duration dueTime;
 	private List<Task> tasks;
 	private ProjectStatus status;
 	private TimeSpan timeSpan;
@@ -25,7 +25,7 @@ public class Project {
 	 * @param The project will be instantiated with the given description.
 	 * @param The project will be instantiated with the given due time.
 	 */
-	public Project(String name, String desc, LocalDateTime dueTime) {
+	public Project(String name, String desc, Duration dueTime) {
 		this.name = name;
 		this.description = desc;
 		this.dueTime = dueTime;

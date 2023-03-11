@@ -1,6 +1,6 @@
 package src;
 
-import java.time.LocalDate;
+import java.time.Duration;
 import java.util.List;
 
 import src.Status.status;
@@ -62,6 +62,18 @@ public class ProjectManager extends User {
 	}
 	
 	/**
+	 * Setter to advance the system time.
+	 * @pre The Project Manager must be logged in.
+	 * @param time is the time this project manager wants to advance the system time with.
+	 */
+	public void advanceTime(int time) {
+		if (!super.loggedIn) {
+			throw new IllegalArgumentException();
+		}
+		else {
+			Duration timeToAdvanceInMinutes = Duration.ofMinutes(time);
+			Clock.advanceTime(timeToAdvanceInMinutes);
+		}
 	 * Setter called by the controller to create a new project.
 	 * @param name contains the name of the to be created project; There can't exist a project with the same name.
 	 * @param desc contains the description of the to be created project.
