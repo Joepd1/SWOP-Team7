@@ -60,4 +60,11 @@ public class Developer extends User {
 			task.finishTask();
 		}
 	}
+	
+	/**
+	 * Getter that returns the tasks this developer is associated with.
+	 */
+	public List<Task> getTasks() {
+		return this.tasks;
+	}
 }
