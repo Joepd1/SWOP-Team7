@@ -1,6 +1,7 @@
 package src;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 import src.Status.status;
@@ -24,6 +25,7 @@ public class ProjectManager extends User {
 	 * @contains the list of all projects this user is managing.
 	 */
 	private List<Project> projects;
+	private List<Task> createdTasks;
 	
 	
 	/**
@@ -32,6 +34,8 @@ public class ProjectManager extends User {
 	 */
 	public ProjectManager(String name) {
 		super.name = name;
+		this.createdTasks = new ArrayList<Task>();
+		this.projects = new ArrayList<Project>();
 	}
 
 	/**
@@ -48,16 +52,11 @@ public class ProjectManager extends User {
 	 * @param newTask is the task that must replace the failed task in the given project.
 	 */
 	public void replaceTask (Project project, Task failedTask, Task newTask) {
-		if (!failedTask.failedTask() || !this.projects.contains(failedTask)) {
+		if (!failedTask.failedTask() || !this.projects.contains(project) || !this.createdTasks.contains(failedTask) || !this.createdTasks.contains(newTask)) {
 			throw new IllegalArgumentException();
 		}
 		else {
 			project.replace(failedTask, newTask);
-			
-			// This alternative task replaces the failed task with respect to
-			// dependency management or determining the project status (ongoing or finished).
-			// The time spent on the failed task is however counted for the total execution time of
-			// the project. 
 		}
 	}
 	
@@ -74,12 +73,15 @@ public class ProjectManager extends User {
 			Duration timeToAdvanceInMinutes = Duration.ofMinutes(time);
 			Clock.advanceTime(timeToAdvanceInMinutes);
 		}
+	}
+	
+	/**
 	 * Setter called by the controller to create a new project.
 	 * @param name contains the name of the to be created project; There can't exist a project with the same name.
 	 * @param desc contains the description of the to be created project.
 	 * @param dueTime contains the due time of the to be created project.
 	 */
-	public void createProject(String name, String desc, LocalDate dueTime) {
+	public void createProject(String name, String desc, Duration dueTime) {
 		if (!super.loggedIn) {
 			throw new IllegalArgumentException();
 		}
@@ -90,6 +92,9 @@ public class ProjectManager extends User {
 		}
 		Project project = new Project(name, desc, dueTime);
 		this.projects.add(project);
+	}
+	
+	/**
 	 * Function to let a PM create a task.
 	 * @pre This PM must be logged in
 	 * @pre The project this PM wants to associate this task with, must be in executing state.
@@ -102,9 +107,10 @@ public class ProjectManager extends User {
 	 * @param imWaitingFor are the tasks that this task depends on; If one isn't finished, this task can't start.
 	 */
 	public void createTask(Project project, String description, int duration, float deviation, List<Task> imWaitingFor) {
-		if (!super.loggedIn || project.getStatus() != status.EXECUTING) {
+		if (!super.loggedIn || !project.getStatus().isExecuting()) {
 			throw new IllegalArgumentException();
 		}
 		Task task = new Task(project, description, duration, deviation, imWaitingFor);
+		this.createdTasks.add(task);
 	}
 }

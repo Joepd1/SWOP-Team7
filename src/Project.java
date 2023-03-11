@@ -1,7 +1,6 @@
 package src;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -134,7 +133,7 @@ public class Project {
 	/**
 	 * Getter that returns the due time of this project.
 	 */
-	public LocalDate getDueTime() {return this.dueTime;}
+	public Duration getDueTime() {return this.dueTime;}
 
 	/**
 	 * Getter that returns the status of this project.
@@ -152,7 +151,7 @@ public class Project {
 	 */
 	public void finishProject() {
 		if (finishedProject()) {
-			this.timeSpan.endTask();
+			this.timeSpan.endTime();
 		}
 		else {
 			throw new IllegalArgumentException();
@@ -162,16 +161,16 @@ public class Project {
 	/**
 	 * Getter that returns the time the project was being executed.
 	 */
-	public Duration totalTimeProject() {return this.timeSpan.getElapsedTime(this.status.getStatus());}
+	public Duration totalTimeProject() {return this.timeSpan.getElapsedTime(this.status);}
 	
 	/**
 	 * Getter that returns the total time spent on all tasks.
 	 */
-	public List<Duration> totalTimeTasks() {
-		List<Duration> list = new ArrayList<Duration>();
+	public Duration totalTimeTasks() {
+		Duration temp = Duration.ZERO;
 		for (Task t : this.tasks) {
-			list.add(t.spentTime());
+			temp.plus(t.spentTime());
 		}
-		return list;
+		return temp;
 	}
 }

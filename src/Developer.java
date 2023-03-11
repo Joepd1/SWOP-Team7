@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * TODO: (LOGIN & LOGOUT ?)
  * @author vincent
  */
 public class Developer extends User {
@@ -20,21 +19,6 @@ public class Developer extends User {
 	 */
 	public Developer(String name) {
 		super.name = name;
-	}
-
-	/**
-	 * Setter that updates the list of tasks this developer is/ has been working on.
-	 * 
-	 * @pre The status of the task must be executing & must be unavailable
-	 * @param task is the task which this developer has chosen to execute
-	 */
-	public void addTask(Task task) {
-		if (task.pendingTask() && task.startTask(this)) {
-			this.tasks.add(task);
-		}
-		else {
-			throw new IllegalArgumentException();
-		}
 	}
 	
 	/**
@@ -63,6 +47,7 @@ public class Developer extends User {
 		else if (task.pendingTask()) {
 			if (status.isExecuting()) {
 				task.startTask(this);
+				this.tasks.add(task);
 			}
 		}
 		else {
@@ -76,7 +61,7 @@ public class Developer extends User {
 	 */
 	public List<Task> getMyTasks() {
 		List<Task> availableTasks = new ArrayList<Task>();
-		if (this.tasks == null) {
+		if (this.tasks.size() == 0) {
 			return availableTasks;
 		}
 		else {
@@ -92,7 +77,7 @@ public class Developer extends User {
 	/**
 	 * Getter that returns the tasks this developer is associated with.
 	 */
-	public List<Task> getTasks() {
+	public List<Task> getAllTasks() {
 		return this.tasks;
 	}
 }

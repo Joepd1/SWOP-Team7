@@ -157,7 +157,7 @@ public class Task {
 	 * @pre The task is indicated as finished
 	 */
 	public void finishTask() {
-		this.timeSpan.endTask();
+		this.timeSpan.endTime();
 		this.status.finishStatus();
 		updateDepStatus();
 	}
@@ -167,7 +167,7 @@ public class Task {
 	 * 	the task as failed.
 	 */
 	public void failTask() {
-		this.timeSpan.endTask();
+		this.timeSpan.endTime();
 		this.status.failStatus();
 	}
 	
@@ -189,7 +189,6 @@ public class Task {
 				waitingTask.status.freeTask();
 			}
 		}
-		this.timeSpan.getElapsedTime(this.status);
 	}
 	
 	/**
@@ -227,6 +226,11 @@ public class Task {
 	 * This function returns the tasks that depend on this task
 	 */
 	public List<Task> getDependecies() {return this.dependsOnMe;}
+	
+	/**
+	 * This function returns the project that is associated with this task
+	 */
+	public Project getProject() {return this.project;}
 	
 	
 	/**

@@ -7,14 +7,14 @@ public class Clock {
 	private static Duration systemTime;
 	
 	public Clock() {
-		Clock.systemTime = Duration.ZERO;
+		systemTime = Duration.ZERO;
 	}
 	
 	/**
 	 * Setter to advance the internal system time.
-	 * 
 	 * @pre can only be called by a Project Manager.
 	 * @pre this Project Manager is logged in.
+	 * 
 	 * @param time to add to the system time in MINUTES
 	 */
 	public static void advanceTime(Duration time) {
@@ -22,9 +22,4 @@ public class Clock {
 	}
 	
 	public static Duration getSystemTime() { return systemTime;}
-	
-	/**
-	 * Maybe not sure?
-	 */
-	public void updateOjects() {}
 }

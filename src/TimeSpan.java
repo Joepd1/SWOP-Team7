@@ -1,8 +1,6 @@
 package src;
 
 import java.time.Duration;
-import src.Status.status;
-import src.Clock;
 
 /**
  * TODO The time spans can be used to assess the	estimated time allocated to tasks (to improve future project management).
@@ -28,9 +26,9 @@ public class TimeSpan {
 	/* 
 	 * This function will calculate the time that was needed to execute a task and will update the timestamp accordingly.
 	 * 
-	 * @pre task must be finished or failed
+	 * @pre The task/project must be finished or failed.
 	 */
-	public void endTask() {
+	public void endTime() {
 		this.endTime = Clock.getSystemTime();
 	}
 
@@ -40,13 +38,13 @@ public class TimeSpan {
 	 * 
 	 * @pre task has to be in executing, finished or failed state
 	 */
-	public Duration getElapsedTime(status status) {
-		if (status.equals(status.EXECUTING)) {
+	public Duration getElapsedTime(Status status) {
+		if (status.isExecuting()) {
 			Duration timeNow = Clock.getSystemTime();
 			Duration elapsedTime = timeNow.minus(this.startTime);
 			return elapsedTime;
 		}
-		else if (status.equals(status.FAILED) || status.equals(status.FINISHED)) {
+		else if (status.isFailed() || status.isFinished()) {
 			return this.endTime.minus(this.startTime);
 		}
 		else {

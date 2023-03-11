@@ -29,7 +29,7 @@ public class TaskStatus extends Status {
 	public void startTask() {super.myStatus = status.EXECUTING;}
 		
 	/**
-	 * Setter to indicate that a task has to wait on another one to be finished/.
+	 * Setter to indicate that a task has to wait on another one to be finished.
 	 */
 	public void haltTask() {super.myStatus = status.WAITING;}
 	
