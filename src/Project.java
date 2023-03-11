@@ -31,6 +31,8 @@ public class Project {
 		this.dueTime = dueTime;
 		this.status = new ProjectStatus();
 		this.timeSpan = new TimeSpan();
+		this.dependencies = new HashMap<Task, List<Task>>();
+		this.tasks = new ArrayList<Task>();
 	};
 	
 	/**
@@ -54,13 +56,10 @@ public class Project {
 	 * @param dependsOn are the dependencies of the new (previous parameter) task
 	 */
 	public boolean addTask(Task task, List<Task> dependsOn) { 
-		if (this.dependencies == null) {
-			this.dependencies.put(task, dependsOn);
-			this.tasks.add(task);
-			return true;
+		HashMap<Task, List<Task>> newDependencies = new HashMap<Task, List<Task>>();
+		for (Map.Entry<Task, List<Task>> entry : this.dependencies.entrySet()) {
+			newDependencies.put(entry.getKey(), entry.getValue());
 		}
-		
-		HashMap<Task,List<Task>> newDependencies = (HashMap<Task,List<Task>>) this.dependencies.clone();
 		newDependencies.put(task, dependsOn);
 		if (!checkCycles(task, newDependencies)) {return false;}
 		else {
@@ -121,6 +120,31 @@ public class Project {
 	 * Getter that returns all the tasks in this project.
 	 */
 	public List<Task> getTasks() {return this.tasks;}
+	
+	/**
+	 * Getter that returns the name of this project.
+	 */
+	public String getName() {return this.name;}
+
+	/**
+	 * Getter that returns the description of this project.
+	 */
+	public String getDescription() {return this.description;}
+
+	/**
+	 * Getter that returns the due time of this project.
+	 */
+	public LocalDate getDueTime() {return this.dueTime;}
+
+	/**
+	 * Getter that returns the status of this project.
+	 */
+	public ProjectStatus getStatus() {return this.status;}
+
+	/**
+	 * Getter that returns the time span of this project.
+	 */
+	public TimeSpan getTimeSpan() {return this.timeSpan;}
 	
 	/**
 	 * Setter to indicate this project as finished.

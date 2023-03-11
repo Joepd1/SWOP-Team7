@@ -14,7 +14,7 @@ public class Task {
 	 * @contains the estimated duration of execution of the task
 	 * @contains the acceptable deviation of the time of execution of the task
 	 * @contains the task's status
-	 * @contatins the developer that is performing this task (is null at creation, but initialized after the function startTask())
+	 * @contains the developer that is performing this task (is null at creation, but initialized after the function startTask())
 	 * @contains the timeSpan of this task (is null at creation, but initialized after the function startTask())
 	 * @contains a list of all the tasks that this task depends on
 	 * @contains a list of the tasks that are waitingFor this task, i.e. the tasks that depend on this task
@@ -22,12 +22,12 @@ public class Task {
 	 */
 	private final Project project;
 	private final String description;
-	private final int esitmatedDuration;
+	private final int estimatedDuration;
 	private final float acceptableDeviation; 
 	private TaskStatus status;
 	private Developer performedBy;
 	private TimeSpan timeSpan;
-	private final List<Task> dependsOnMe; // list that wait for me to finish
+	private List<Task> dependsOnMe; // list that wait for me to finish
 	private List<Task> imWaitingFor; // list to be finished before i an begin
 	
 	/**
@@ -42,27 +42,30 @@ public class Task {
 	 * @param description is the description of the task
 	 * @param duration is the time the PM thinks is needed for the task
 	 * @param deviation is the percentage of acceptable deviation in completion time
-	 * @param dependsOn are the tasks that this task depend on, if one of these tasks isn't marked as finished, this task can't be started
-	 * @param waitingFor are the tasks that depend on this task.
+	 * @param imWaitingFor are the tasks that this task depend on, if one of these tasks isn't marked as finished, this task can't be started
 	 * 	the status of this task will be set as unavailable
 	 */
-	public Task(Project project, String description, int duration, float deviation, List<Task> dependsOnMe, List<Task> imWaitingFor) {		
-		if (project.finishedProject() || deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
+	public Task(Project project, String description, int duration, float deviation, List<Task> imWaitingFor) {		
+		if (deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
 			throw new IllegalArgumentException();
 		}
 		else {
 			this.project = project; 
 			this.description = description;
-			this.esitmatedDuration = duration;
+			this.estimatedDuration = duration;
 			this.acceptableDeviation = deviation;
 			this.status = new TaskStatus();
-			this.dependsOnMe = dependsOnMe;
 			this.imWaitingFor = imWaitingFor;
 			for (Task task : this.imWaitingFor) {
 				if (!task.finishedTask()) {
 					this.status.haltTask();
 				}				
 			}
+			for (Task task : project.getTasks()) {
+				if (task.waitingFor().contains(this)) {
+					this.dependsOnMe.add(task);
+				}
+			}		
 		}
 	}
 	
@@ -186,13 +189,45 @@ public class Task {
 				waitingTask.status.freeTask();
 			}
 		}
-		this.timeSpan.getElapsedTime(this.status.getStatus());
+		this.timeSpan.getElapsedTime(this.status);
 	}
 	
 	/**
 	 * This function returns the status of this task
 	 */
 	public TaskStatus getStatus() {return this.status;}
+
+	/**
+	 * This function returns the description of this task
+	 */
+	public String getDescription() {return this.description;}
+
+	/**
+	 * This function returns the estimated duration of this task
+	 */
+	public int getEstimatedDuration() {return this.estimatedDuration;}
+
+	/**
+	 * This function returns the acceptable deviation of this task
+	 */
+	public float getAcceptableDeviation() {return this.acceptableDeviation;}
+
+	/**
+	 * This function returns the developer who is performing this task.
+	 * 	Returns null if the status of this task is PENDING or WAITING
+	 */
+	public Developer getDeveloper() {return this.performedBy;}
+
+	/**
+	 * This function returns the time span of this task
+	 */
+	public TimeSpan getTimeSpan() {return this.timeSpan;}
+
+	/**
+	 * This function returns the tasks that depend on this task
+	 */
+	public List<Task> getDependecies() {return this.dependsOnMe;}
+	
 	
 	/**
 	 * This function returns the time that has been spent on this task. If the task is still being executed (2nd clause)
@@ -200,7 +235,7 @@ public class Task {
 	 */
 	public Duration spentTime() {
 		if (!this.waitingTask() || !this.pendingTask() ) {
-			return this.timeSpan.getElapsedTime(this.status.getStatus());
+			return this.timeSpan.getElapsedTime(this.status);
 		}
 		else {
 			throw new IllegalArgumentException();

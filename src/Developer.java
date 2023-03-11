@@ -3,8 +3,6 @@ package src;
 import java.util.List;
 import java.util.ArrayList;
 
-import src.Status.status;
-
 /**
  * TODO: (LOGIN & LOGOUT ?)
  * @author vincent
@@ -54,7 +52,7 @@ public class Developer extends User {
 		if (!this.tasks.contains(task) || (!task.executingTask() || !task.pendingTask()) || !super.loggedIn) {
 			throw new IllegalArgumentException();
 		}
-		else if (status.equals(status.FAILED)) {
+		else if (status.isFailed()) {
 			task.failTask();
 		}
 		else if (status.equals(status.FINISHED)) {
