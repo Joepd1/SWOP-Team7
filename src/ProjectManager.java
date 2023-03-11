@@ -65,10 +65,10 @@ public class ProjectManager extends User {
 	 * @param dependsOnMe are the tasks that depend on this task.
 	 * @param imWaitingFor are the tasks that this task depends on; If one isn't finished, this task can't start.
 	 */
-	public void createTask(Project project, String description, int duration, float deviation, List<Task> dependsOnMe, List<Task> imWaitingFor) {
+	public void createTask(Project project, String description, int duration, float deviation, List<Task> imWaitingFor) {
 		if (!super.loggedIn || project.getStatus() != status.EXECUTING) {
 			throw new IllegalArgumentException();
 		}
-		Task task = new Task(project, description, duration, deviation, dependsOnMe, imWaitingFor);
+		Task task = new Task(project, description, duration, deviation, imWaitingFor);
 	}
 }
