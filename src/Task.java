@@ -23,7 +23,7 @@ public class Task {
 	private final Project project;
 	private final String description;
 	private final int estimatedDuration;
-	private final float acceptableDeviation; 
+	private final double acceptableDeviation; 
 	private TaskStatus status;
 	private Developer performedBy;
 	private TimeSpan timeSpan;
@@ -45,7 +45,7 @@ public class Task {
 	 * @param imWaitingFor are the tasks that this task depend on, if one of these tasks isn't marked as finished, this task can't be started
 	 * 	the status of this task will be set as unavailable
 	 */
-	public Task(Project project, String description, int duration, float deviation, List<Task> imWaitingFor) {		
+	public Task(Project project, String description, int duration, double deviation, List<Task> imWaitingFor) {		
 		if (deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
 			throw new IllegalArgumentException();
 		}
@@ -209,7 +209,7 @@ public class Task {
 	/**
 	 * This function returns the acceptable deviation of this task
 	 */
-	public float getAcceptableDeviation() {return this.acceptableDeviation;}
+	public double getAcceptableDeviation() {return this.acceptableDeviation;}
 
 	/**
 	 * This function returns the developer who is performing this task.
