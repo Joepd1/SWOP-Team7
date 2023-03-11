@@ -1,6 +1,7 @@
 package src;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import src.Status.status;
 
@@ -49,15 +50,37 @@ public class Developer extends User {
 	 * @param status is the specific status the developer want's to change the status
 	 * 	of the task into
 	 */
-	public void setTaskStatus(Task task, status status) {
-		if (!this.tasks.contains(task) || !task.executingTask()) {
+	public void updateTaskStatus(Task task, status status) {
+		if (!this.tasks.contains(task) || (!task.executingTask() || !task.pendingTask()) || !super.loggedIn) {
 			throw new IllegalArgumentException();
 		}
 		else if (status.equals(status.FAILED)) {
 			task.failTask();
 		}
-		else {
+		else if (status.equals(status.FINISHED)) {
 			task.finishTask();
+		}
+		else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	/**
+	 * Getter that returns all the tasks this developer is executing and the tasks that are pending (waiting to be chosen
+	 * 	by a developer to get executed).
+	 */
+	public List<Task> getMyTasks() {
+		List<Task> availableTasks = new ArrayList<Task>();
+		if (this.tasks == null) {
+			return availableTasks;
+		}
+		else {
+			for (Task task : this.tasks) {
+				if (task.executingTask() || task.pendingTask()) {
+					availableTasks.add(task);
+				}
+			}
+			return availableTasks;
 		}
 	}
 	
