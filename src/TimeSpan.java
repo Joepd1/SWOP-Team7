@@ -1,11 +1,7 @@
 package src;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Period;
-
-import src.Status.status;
+import java.time.LocalDateTime;
 
 /**
  * TODO The time spans can be used to assess the	estimated time allocated to tasks (to improve future project management).
@@ -18,14 +14,14 @@ public class TimeSpan {
 	 * @contains the time the associated task was started; i.e. when a developer changed it's status to executing, is null before this.
 	 * @contains the time the associated task was ended; i.e. when a developer changed it's status to finished or failed, is null before this.
 	 */
-	private final LocalTime startTime;
-	private LocalTime endTime;
+	private final LocalDateTime startTime;
+	private LocalDateTime endTime;
 
 	/**
 	 * The constructor will start the clock and set the the time-collector for replaced tasks to zero.
 	 */
 	public TimeSpan() {
-		this.startTime = LocalTime.now();
+		this.startTime = LocalDateTime.now();
 	}
 	
 	/* 
@@ -34,7 +30,7 @@ public class TimeSpan {
 	 * @pre task must be finished or failed
 	 */
 	public void endTask() {
-		this.endTime = LocalTime.now();
+		this.endTime = LocalDateTime.now();
 	}
 
 	/** 
@@ -43,13 +39,13 @@ public class TimeSpan {
 	 * 
 	 * @pre task has to be in executing, finished or failed state
 	 */
-	public Duration getElapsedTime(status status) {
-		if (status.equals(status.EXECUTING)) {
-			LocalTime timeNow = LocalTime.now();
+	public Duration getElapsedTime(Status status) {
+		if (status.isExecuting()) {
+			LocalDateTime timeNow = LocalDateTime.now();
 			Duration elapsedTime = Duration.between(startTime, timeNow);
 			return elapsedTime;
 		}
-		else if (status.equals(status.FAILED) || status.equals(status.FINISHED)) {
+		else if (status.isFailed() || status.isFinished()) {
 			return Duration.between(this.startTime, this.endTime);
 		}
 		else {

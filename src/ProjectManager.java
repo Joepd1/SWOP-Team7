@@ -3,6 +3,8 @@ package src;
 import java.time.LocalDate;
 import java.util.List;
 
+import src.Status.status;
+
 
 //TODO: 	
 // ADVANCE TIME
@@ -19,10 +21,11 @@ import java.util.List;
 public class ProjectManager extends User {
 	
 	/**
-	 * Contains the list of all projects this user is managing.
+	 * @contains the list of all projects this user is managing.
 	 */
 	private List<Project> projects;
-
+	
+	
 	/**
 	 * The constructor instantiates the super class (User) with the correct name.
 	 * @param name is the name of the user.
@@ -31,6 +34,12 @@ public class ProjectManager extends User {
 		super.name = name;
 	}
 
+	/**
+	 * Getter that returns all the projects this user is associated with.
+	 * @pre the user is logged in.
+	 */
+	public List<Project> getProjects() {return this.projects;}
+	
 	/**
 	 * This function will update the given project; It will get the necessary info of the failed task and update the new
 	 * 	one accordingly.
@@ -69,5 +78,21 @@ public class ProjectManager extends User {
 		}
 		Project project = new Project(name, desc, dueTime);
 		this.projects.add(project);
+	 * Function to let a PM create a task.
+	 * @pre This PM must be logged in
+	 * @pre The project this PM wants to associate this task with, must be in executing state.
+	 * 
+	 * @param project is the project this PM wants to associate this task with.
+	 * @param description is the description of this task.
+	 * @param duration is the estimated duration of the task.
+	 * @param deviation is the acceptable deviation of the time of execution of the task.
+	 * @param dependsOnMe are the tasks that depend on this task.
+	 * @param imWaitingFor are the tasks that this task depends on; If one isn't finished, this task can't start.
+	 */
+	public void createTask(Project project, String description, int duration, float deviation, List<Task> imWaitingFor) {
+		if (!super.loggedIn || project.getStatus() != status.EXECUTING) {
+			throw new IllegalArgumentException();
+		}
+		Task task = new Task(project, description, duration, deviation, imWaitingFor);
 	}
 }
