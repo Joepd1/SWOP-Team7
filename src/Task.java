@@ -14,7 +14,7 @@ public class Task {
 	 * @contains the estimated duration of execution of the task
 	 * @contains the acceptable deviation of the time of execution of the task
 	 * @contains the task's status
-	 * @contatins the developer that is performing this task (is null at creation, but initialized after the function startTask())
+	 * @contains the developer that is performing this task (is null at creation, but initialized after the function startTask())
 	 * @contains the timeSpan of this task (is null at creation, but initialized after the function startTask())
 	 * @contains a list of all the tasks that this task depends on
 	 * @contains a list of the tasks that are waitingFor this task, i.e. the tasks that depend on this task
@@ -22,7 +22,7 @@ public class Task {
 	 */
 	private final Project project;
 	private final String description;
-	private final int esitmatedDuration;
+	private final int estimatedDuration;
 	private final float acceptableDeviation; 
 	private TaskStatus status;
 	private Developer performedBy;
@@ -53,7 +53,7 @@ public class Task {
 		else {
 			this.project = project; 
 			this.description = description;
-			this.esitmatedDuration = duration;
+			this.estimatedDuration = duration;
 			this.acceptableDeviation = deviation;
 			this.status = new TaskStatus();
 			this.dependsOnMe = dependsOnMe;
@@ -193,6 +193,38 @@ public class Task {
 	 * This function returns the status of this task
 	 */
 	public TaskStatus getStatus() {return this.status;}
+
+	/**
+	 * This function returns the description of this task
+	 */
+	public String getDescription() {return this.description;}
+
+	/**
+	 * This function returns the estimated duration of this task
+	 */
+	public int getEstimatedDuration() {return this.estimatedDuration;}
+
+	/**
+	 * This function returns the acceptable deviation of this task
+	 */
+	public float getAcceptableDeviation() {return this.acceptableDeviation;}
+
+	/**
+	 * This function returns the developer who is performing this task.
+	 * 	Returns null if the status of this task is PENDING or WAITING
+	 */
+	public Developer getDeveloper() {return this.performedBy;}
+
+	/**
+	 * This function returns the time span of this task
+	 */
+	public TimeSpan getTimeSpan() {return this.timeSpan;}
+
+	/**
+	 * This function returns the tasks that depend on this task
+	 */
+	public List<Task> getDependecies() {return this.dependsOnMe;}
+	
 	
 	/**
 	 * This function returns the time that has been spent on this task. If the task is still being executed (2nd clause)

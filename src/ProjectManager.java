@@ -18,10 +18,11 @@ import java.util.List;
 public class ProjectManager extends User {
 	
 	/**
-	 * Contains the list of all projects this user is managing.
+	 * @contains the list of all projects this user is managing.
 	 */
 	private List<Project> projects;
-
+	
+	
 	/**
 	 * The constructor instantiates the super class (User) with the correct name.
 	 * @param name is the name of the user.
@@ -30,6 +31,12 @@ public class ProjectManager extends User {
 		super.name = name;
 	}
 
+	/**
+	 * Getter that returns all the projects this user is associated with.
+	 * @pre the user is logged in.
+	 */
+	public List<Project> getProjects() {return this.projects;}
+	
 	// USE CASE:CREATE TASK
 	/**
 	 * This function will update the given project; It will get the necessary info of the failed task and update the new
