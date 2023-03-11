@@ -1,5 +1,6 @@
 package src;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -30,7 +31,6 @@ public class ProjectManager extends User {
 		super.name = name;
 	}
 
-	// USE CASE:CREATE TASK
 	/**
 	 * This function will update the given project; It will get the necessary info of the failed task and update the new
 	 * 	one accordingly.
@@ -49,6 +49,16 @@ public class ProjectManager extends User {
 			// dependency management or determining the project status (ongoing or finished).
 			// The time spent on the failed task is however counted for the total execution time of
 			// the project. 
+		}
+	}
+	
+	public void createProject(String name, String desc, LocalDate dueTime) {
+		if (!super.loggedIn) {
+			throw new IllegalArgumentException();
+		}
+		else {
+			Project project = new Project(name, desc, dueTime);
+			this.projects.add(project);
 		}
 	}
 }
