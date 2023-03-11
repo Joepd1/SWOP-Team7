@@ -186,7 +186,7 @@ public class Task {
 				waitingTask.status.freeTask();
 			}
 		}
-		this.timeSpan.getElapsedTime(this.status.getStatus());
+		this.timeSpan.getElapsedTime(this.status);
 	}
 	
 	/**
@@ -200,7 +200,7 @@ public class Task {
 	 */
 	public Duration spentTime() {
 		if (!this.waitingTask() || !this.pendingTask() ) {
-			return this.timeSpan.getElapsedTime(this.status.getStatus());
+			return this.timeSpan.getElapsedTime(this.status);
 		}
 		else {
 			throw new IllegalArgumentException();

@@ -2,8 +2,6 @@ package src;
 
 import java.util.List;
 
-import src.Status.status;
-
 /**
  * TODO: (LOGIN & LOGOUT ?)
  * @author vincent
@@ -49,11 +47,11 @@ public class Developer extends User {
 	 * @param status is the specific status the developer want's to change the status
 	 * 	of the task into
 	 */
-	public void setTaskStatus(Task task, status status) {
+	public void setTaskStatus(Task task, Status status) {
 		if (!this.tasks.contains(task) || !task.executingTask()) {
 			throw new IllegalArgumentException();
 		}
-		else if (status.equals(status.FAILED)) {
+		else if (status.isFailed()) {
 			task.failTask();
 		}
 		else {

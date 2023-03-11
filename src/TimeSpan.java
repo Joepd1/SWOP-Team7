@@ -3,8 +3,6 @@ package src;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import src.Status.status;
-
 /**
  * TODO The time spans can be used to assess the	estimated time allocated to tasks (to improve future project management).
  * 
@@ -41,13 +39,13 @@ public class TimeSpan {
 	 * 
 	 * @pre task has to be in executing, finished or failed state
 	 */
-	public Duration getElapsedTime(status status) {
-		if (status.equals(status.EXECUTING)) {
+	public Duration getElapsedTime(Status status) {
+		if (status.isExecuting()) {
 			LocalDateTime timeNow = LocalDateTime.now();
 			Duration elapsedTime = Duration.between(startTime, timeNow);
 			return elapsedTime;
 		}
-		else if (status.equals(status.FAILED) || status.equals(status.FINISHED)) {
+		else if (status.isFailed() || status.isFinished()) {
 			return Duration.between(this.startTime, this.endTime);
 		}
 		else {
