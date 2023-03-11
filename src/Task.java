@@ -27,7 +27,7 @@ public class Task {
 	private TaskStatus status;
 	private Developer performedBy;
 	private TimeSpan timeSpan;
-	private final List<Task> dependsOnMe; // list that wait for me to finish
+	private List<Task> dependsOnMe; // list that wait for me to finish
 	private List<Task> imWaitingFor; // list to be finished before i an begin
 	
 	/**
@@ -42,12 +42,11 @@ public class Task {
 	 * @param description is the description of the task
 	 * @param duration is the time the PM thinks is needed for the task
 	 * @param deviation is the percentage of acceptable deviation in completion time
-	 * @param dependsOn are the tasks that this task depend on, if one of these tasks isn't marked as finished, this task can't be started
-	 * @param waitingFor are the tasks that depend on this task.
+	 * @param imWaitingFor are the tasks that this task depend on, if one of these tasks isn't marked as finished, this task can't be started
 	 * 	the status of this task will be set as unavailable
 	 */
-	public Task(Project project, String description, int duration, float deviation, List<Task> dependsOnMe, List<Task> imWaitingFor) {		
-		if (project.finishedProject() || deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
+	public Task(Project project, String description, int duration, float deviation, List<Task> imWaitingFor) {		
+		if (deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
 			throw new IllegalArgumentException();
 		}
 		else {
@@ -56,13 +55,17 @@ public class Task {
 			this.estimatedDuration = duration;
 			this.acceptableDeviation = deviation;
 			this.status = new TaskStatus();
-			this.dependsOnMe = dependsOnMe;
 			this.imWaitingFor = imWaitingFor;
 			for (Task task : this.imWaitingFor) {
 				if (!task.finishedTask()) {
 					this.status.haltTask();
 				}				
 			}
+			for (Task task : project.getTasks()) {
+				if (task.waitingFor().contains(this)) {
+					this.dependsOnMe.add(task);
+				}
+			}		
 		}
 	}
 	
@@ -186,7 +189,7 @@ public class Task {
 				waitingTask.status.freeTask();
 			}
 		}
-		this.timeSpan.getElapsedTime(this.status.getStatus());
+		this.timeSpan.getElapsedTime(this.status);
 	}
 	
 	/**
@@ -232,7 +235,7 @@ public class Task {
 	 */
 	public Duration spentTime() {
 		if (!this.waitingTask() || !this.pendingTask() ) {
-			return this.timeSpan.getElapsedTime(this.status.getStatus());
+			return this.timeSpan.getElapsedTime(this.status);
 		}
 		else {
 			throw new IllegalArgumentException();
