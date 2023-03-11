@@ -1,7 +1,7 @@
 package src;
 
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +15,7 @@ public class Project {
 	private HashMap<Task,List<Task>> dependencies; //Key depends on value
 	private final String name;
 	private final String description;
-	private final LocalDate dueTime;
+	private final LocalDateTime dueTime;
 	private List<Task> tasks;
 	private ProjectStatus status;
 	private TimeSpan timeSpan;
@@ -25,7 +25,7 @@ public class Project {
 	 * @param The project will be instantiated with the given description.
 	 * @param The project will be instantiated with the given due time.
 	 */
-	public Project(String name, String desc, LocalDate dueTime) {
+	public Project(String name, String desc, LocalDateTime dueTime) {
 		this.name = name;
 		this.description = desc;
 		this.dueTime = dueTime;
