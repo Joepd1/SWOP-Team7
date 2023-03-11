@@ -31,6 +31,8 @@ public class Project {
 		this.dueTime = dueTime;
 		this.status = new ProjectStatus();
 		this.timeSpan = new TimeSpan();
+		this.dependencies = new HashMap<Task, List<Task>>();
+		this.tasks = new ArrayList<Task>();
 	};
 	
 	/**
@@ -54,13 +56,10 @@ public class Project {
 	 * @param dependsOn are the dependencies of the new (previous parameter) task
 	 */
 	public boolean addTask(Task task, List<Task> dependsOn) { 
-		if (this.dependencies == null) {
-			this.dependencies.put(task, dependsOn);
-			this.tasks.add(task);
-			return true;
+		HashMap<Task, List<Task>> newDependencies = new HashMap<Task, List<Task>>();
+		for (Map.Entry<Task, List<Task>> entry : this.dependencies.entrySet()) {
+			newDependencies.put(entry.getKey(), entry.getValue());
 		}
-		
-		HashMap<Task,List<Task>> newDependencies = (HashMap<Task,List<Task>>) this.dependencies.clone();
 		newDependencies.put(task, dependsOn);
 		if (!checkCycles(task, newDependencies)) {return false;}
 		else {
