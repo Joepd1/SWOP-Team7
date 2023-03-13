@@ -28,17 +28,17 @@ public class Developer extends User {
 	 * This function enables a developer to change the status of a task he is executing.
 	 *  A task that is being executed can only be put in failed or finished state; and one
 	 *  that isn't being executed can't be altered.
-	 * @throws IllegalArgumentException | !this.tasks.contains(task) || !super.loggedIn
+	 * @throws IllegalArgumentException | !super.loggedIn
 	 * @throws IllegalArgumentException | status.isFailed() || status.isFinished() || status.isWaiting()
 	 * @throws IllegalArgumentException | !task.executingTask() || !task.pendingTask()
 	 * @post | if (old{task}.executingTask()) then (new{task}.failedTask || new{task}.finishedTask)
 	 * @post | if (old{task}.pendingTask()) then new{task}.executingTask()
 	 */
 	public void updateTaskStatus(Task task, Status status) {
-		if (!this.tasks.contains(task) || !super.loggedIn) {
+		if (!super.loggedIn) {
 			throw new IllegalArgumentException();
 		}
-		else if (task.executingTask()) {
+		else if (task.executingTask() && this.tasks.contains(task)) {
 			if (status.isFailed()) {
 				task.failTask();
 			}
@@ -46,7 +46,7 @@ public class Developer extends User {
 				task.finishTask();
 			}
 		}
-		else if (task.pendingTask()) {
+		else if (task.pendingTask() && !this.tasks.contains(task)) {
 			if (status.isExecuting()) {
 				task.startTask(this);
 				this.tasks.add(task);
