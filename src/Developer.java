@@ -1,7 +1,7 @@
 package src;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Each instance of this class represents a developer.
@@ -13,7 +13,7 @@ public class Developer extends User {
 	/**
 	 * @invar | tasks != null
 	 */
-	private List<Task> tasks;
+	private Set<Task> tasks;
 	
 	/**
 	 * Initializes this object so that it's name is the given name and it's list of tasks is created.
@@ -21,7 +21,7 @@ public class Developer extends User {
 	 */
 	public Developer(String name) {
 		super.name = name;
-		this.tasks = new ArrayList<Task>();
+		this.tasks = new HashSet<Task>();
 	}
 	
 	/**
@@ -61,8 +61,8 @@ public class Developer extends User {
 	 * Getter that returns all the tasks this developer is executing and the tasks that are pending (waiting to be chosen
 	 * 	by a developer to get executed).
 	 */
-	public List<Task> getMyTasks() {
-		List<Task> availableTasks = new ArrayList<Task>();
+	public Set<Task> getMyTasks() {
+		Set<Task> availableTasks = new HashSet<Task>();
 		for (Task task : this.tasks) {
 			if (task.executingTask() || task.pendingTask()) {
 				availableTasks.add(task);
@@ -74,7 +74,7 @@ public class Developer extends User {
 	/**
 	 * @basic
 	 */
-	public List<Task> getAllTasks() {
+	public Set<Task> getAllTasks() {
 		return this.tasks;
 	}
 }

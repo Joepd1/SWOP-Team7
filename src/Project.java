@@ -1,10 +1,11 @@
 package src;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.jgrapht.alg.cycle.CycleDetector;
+import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
  * Each instance of this class represents a project.
@@ -28,11 +29,12 @@ public class Project {
 	 * @invar | dependencies != null
 	 * @invar | tasks != null
 	 */
-	private HashMap<Task,List<Task>> dependencies; //Key depends on value
+	//private HashMap<Task,List<Task>> dependencies; //Key depends on value
+	private DefaultDirectedGraph<Task,Task> dependencies;
 	private final String name;
 	private final String description;
 	private final Duration dueTime;
-	private List<Task> tasks;
+	private Set<Task> tasks;
 	private ProjectStatus status;
 	private TimeSpan timeSpan;
 
@@ -56,8 +58,8 @@ public class Project {
 		this.dueTime = dueTime;
 		this.status = new ProjectStatus();
 		this.timeSpan = new TimeSpan();
-		this.dependencies = new HashMap<Task, List<Task>>();
-		this.tasks = new ArrayList<Task>();
+		this.dependencies = new DefaultDirectedGraph<Task,Task>(null);
+		this.tasks = new HashSet<Task>();
 	};
 	
 	/**
@@ -71,49 +73,34 @@ public class Project {
 	}
 	
 	/**
-	 * this function adds a task and it's dependencies to the Map of all tasks & their dependencies. The function 
-	 * 	checkCycles is called to check if there are cycles in the updated 'graph'; if not then the 'graph' will be updated
-	 * 	and the function will return true, but of there is a cycle, the Map will not be updated and the function will 
-	 *  return false.
-	 * @param task is the new task
-	 * @param dependsOn are the dependencies of the new (previous parameter) task
+	 * this function adds a task and it's dependencies to the graph of all tasks & their dependencies. If the updated graph
+	 * 	contains a loop, then the function returns false and nothing changes; if it doesn't contain a loop, then the updated
+	 * 	graph will be saved, the new task will be added and the function will return true. 
+	 * @post | 
+	 * @post | 
 	 */
-	public boolean addTask(Task task, List<Task> dependsOn) { 
-		HashMap<Task, List<Task>> newDependencies = new HashMap<Task, List<Task>>();
-		for (Map.Entry<Task, List<Task>> entry : this.dependencies.entrySet()) {
-			newDependencies.put(entry.getKey(), entry.getValue());
+	public boolean addTask(Task newTask, Set<Task> dependsOn) { 
+		DefaultDirectedGraph<Task, Task> newDirectedGraph = new DefaultDirectedGraph<Task, Task>(null);
+		Set<Task> tasks = this.dependencies.vertexSet();
+		for (Task task : tasks) {
+			newDirectedGraph.addVertex(task);
+			Set<Task> myDep = this.dependencies.edgesOf(task);
+			for (Task dep : myDep) {
+				newDirectedGraph.addEdge(task, dep);
+			}
 		}
-		newDependencies.put(task, dependsOn);
-		if (!checkCycles(task, newDependencies)) {return false;}
+		newDirectedGraph.addVertex(newTask);
+		for (Task t : dependsOn) {
+			newDirectedGraph.addEdge(newTask, t);
+		}
+		CycleDetector<Task, Task> cycleDetector = new CycleDetector<>(newDirectedGraph);
+		if (cycleDetector.detectCycles()) {return false;}
 		else {
-			this.dependencies = newDependencies;
-			this.tasks.add(task);
+			this.dependencies = newDirectedGraph;
+			this.tasks.add(newTask);
 			return true;
 		}
-	}
-	
-	/**
-	 * THIS FUNCTION DOESN'T WORK AS WANTED -> TO IMPLEMENT WITH BACKTRACKING OR DFS (?)
-	 * 
-	 * This function checks if there are cycles in the dependency 'graph'. It will start by checking the new task (the one 
-	 * 	added in addTask) and will check for a cycle by keeping a list with all encountered tasks and checking if a new task 
-	 * 	already is in this list.
-	 * @param task
-	 * @param dependencies
-	 */
-	private boolean checkCycles(Task task, HashMap<Task,List<Task>> dependencies) {
-		ArrayList<Task> allTasks = new ArrayList<Task>();
-		allTasks.add(task);
-		for (int i = 0; i < allTasks.size(); i++) {
-			List<Task> deps = dependencies.get(allTasks.get(i));
-			for (Task t : deps) {
-				if (!allTasks.contains(t)) {allTasks.add(t);}
-				else {return false;}
-			}					
-		}
-		return true;		
-	}
-	
+	}	
 		
 	/**
 	 * This function replaces the dependencies from old to new; In both the dependencies where the old task is depenendent
@@ -126,24 +113,22 @@ public class Project {
 		newTask.addDepending(oldTask.dependsOn());
 		newTask.addWaiting(oldTask.waitingFor());
 		
-		List <Task> dep = this.dependencies.get(oldTask);
-		this.dependencies.remove(oldTask, dep);
-		this.dependencies.put(newTask, dep);
-		for (Map.Entry<Task, List<Task>> entry : this.dependencies.entrySet()) {
-			List<Task> tempList = entry.getValue();
-			Task tempTask = entry.getKey();
-			if (tempList.contains(oldTask)) {
-				tempList.remove(oldTask);
-				tempList.add(newTask);
-				this.dependencies.put(tempTask, tempList);
-			}
+		Set<Task> dep = this.dependencies.edgesOf(oldTask);
+		this.dependencies.removeAllEdges(dep);
+		for (Task t : dep) {
+			this.dependencies.addEdge(newTask, t);
+		}
+		Set<Task> sources = this.dependencies.incomingEdgesOf(oldTask);
+		for (Task source : sources) {
+			this.dependencies.removeEdge(source, oldTask);
+			this.dependencies.addEdge(source, newTask);
 		}
 	}
 	
 	/**
 	 * @basic
 	 */
-	public List<Task> getTasks() {return this.tasks;}
+	public Set<Task> getTasks() {return this.tasks;}
 	
 	/**
 	 * @basic
@@ -173,7 +158,7 @@ public class Project {
 	/**
 	 * @basic
 	 */
-	public HashMap<Task, List<Task>> getDependencies() {return this.dependencies;}
+	public DefaultDirectedGraph<Task,Task> getDependencies() {return this.dependencies;}
 	
 	/**
 	 * Set's the status of this project as finished.

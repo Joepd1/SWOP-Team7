@@ -1,7 +1,5 @@
 package src;
 
-import java.util.List;
-
 /**
  * Each instance of this class represents the status of a project.
  * @invar | getStatus() != null

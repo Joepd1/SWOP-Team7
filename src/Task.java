@@ -2,6 +2,7 @@ package src;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Each instance of this class represents a task.
@@ -30,8 +31,8 @@ public class Task {
 	private TaskStatus status;
 	private Developer performedBy;
 	private TimeSpan timeSpan;
-	private List<Task> dependsOnMe; // list that wait for me to finish
-	private List<Task> imWaitingFor; // list to be finished before i an begin
+	private Set<Task> dependsOnMe; // list that wait for me to finish
+	private Set<Task> imWaitingFor; // list to be finished before i an begin
 	
 	/**
 	 * Initializes this object so it can represent a task, whose associated project is the given project, description is the given description,
@@ -51,7 +52,7 @@ public class Task {
 	 * @post | getProject() == project
 	 * @post | waitingFor() == imWaitingFor
 	 */
-	public Task(Project project, String description, int duration, double deviation, List<Task> imWaitingFor) {		
+	public Task(Project project, String description, int duration, double deviation, Set<Task> imWaitingFor) {		
 		if (deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
 			throw new IllegalArgumentException();
 		}
@@ -80,7 +81,7 @@ public class Task {
 	 * @throws IllegalArgumentException() | dep == null
 	 * @post | new{dependsOn()} == old{dependsOn()}.addAll(dep)
 	 */
-	public void addDepending(List<Task> dep) {
+	public void addDepending(Set<Task> dep) {
 		if (dep == null) {
 			throw new IllegalArgumentException();
 		}
@@ -94,7 +95,7 @@ public class Task {
 	 * @throws IllegalArgumentException() | wait == null
 	 * @post | new{imWaitingFor()} == old{imWaitingFor()}.addAll(wait)
 	 */
-	public void addWaiting(List<Task> wait) {
+	public void addWaiting(Set<Task> wait) {
 		if (wait == null) {
 			throw new IllegalArgumentException();
 		}
@@ -235,12 +236,12 @@ public class Task {
 	/**
 	 * @basic
 	 */
-	public List<Task> waitingFor() {return this.imWaitingFor;}
+	public Set<Task> waitingFor() {return this.imWaitingFor;}
 	
 	/**
 	 * @basic
 	 */
-	public List<Task> dependsOn() {return this.dependsOnMe;}
+	public Set<Task> dependsOn() {return this.dependsOnMe;}
 	
 	/**
 	 * This function returns the time that has been spent on this task. 

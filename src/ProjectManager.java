@@ -1,8 +1,8 @@
 package src;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Each instance of this class represents a project manager.
@@ -16,8 +16,8 @@ public class ProjectManager extends User {
 	 * @invar | projects != null
 	 * @invar | createdTasks != null
 	 */
-	private List<Project> projects;
-	private List<Task> createdTasks;
+	private HashSet<Project> projects;
+	private HashSet<Task> createdTasks;
 	
 	
 	/**
@@ -27,19 +27,19 @@ public class ProjectManager extends User {
 	 */
 	public ProjectManager(String name) {
 		super.name = name;
-		this.createdTasks = new ArrayList<Task>();
-		this.projects = new ArrayList<Project>();
+		this.createdTasks = new HashSet<Task>();
+		this.projects = new HashSet<Project>();
 	}
 
 	/**
 	 * @basic
 	 */
-	public List<Project> getProjects() {return this.projects;}
+	public HashSet<Project> getProjects() {return this.projects;}
 	
 	/**
 	 * @basic
 	 */
-	public List<Task> getCreatedTasks() {return this.createdTasks;}
+	public HashSet<Task> getCreatedTasks() {return this.createdTasks;}
 	
 	/**
 	 * This function will update the given project; It will get the necessary info of the failed task and update the new
@@ -107,11 +107,16 @@ public class ProjectManager extends User {
 	 * @post | task.waitingFor() == imWaitingFor
 	 * @post | new{createdTasks} = old{createdTasks}.add(task)
 	 */
-	public void createTask(Project project, String description, int duration, double deviation, List<Task> imWaitingFor) {
+	public void createTask(Project project, String description, int duration, double deviation, Set<Task> imWaitingFor) {
 		if (!super.loggedIn || project == null || !project.getStatus().isExecuting()) {
 			throw new IllegalArgumentException();
 		}
 		Task task = new Task(project, description, duration, deviation, imWaitingFor);
-		this.createdTasks.add(task);
+		if (project.addTask(task, imWaitingFor)) {
+			this.createdTasks.add(task);
+		}
+		else {
+			throw new IllegalArgumentException();
+		}
 	}
 }
