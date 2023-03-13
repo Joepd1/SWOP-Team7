@@ -1,11 +1,14 @@
 package src;
 
+import java.awt.List;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jgrapht.alg.cycle.CycleDetector;
-import org.jgrapht.graph.DefaultDirectedGraph;
+//import org.jgrapht.alg.cycle.CycleDetector;
+//import org.jgrapht.graph.*;
 
 /**
  * Each instance of this class represents a project.
@@ -30,7 +33,9 @@ public class Project {
 	 * @invar | tasks != null
 	 */
 	//private HashMap<Task,List<Task>> dependencies; //Key depends on value
-	private DefaultDirectedGraph<Task,Task> dependencies;
+	//private HashMap<Task,Task> dependencies;
+	
+	private Graph dependencyGraph;
 	private final String name;
 	private final String description;
 	private final Duration dueTime;
@@ -58,8 +63,10 @@ public class Project {
 		this.dueTime = dueTime;
 		this.status = new ProjectStatus();
 		this.timeSpan = new TimeSpan();
-		this.dependencies = new DefaultDirectedGraph<Task,Task>(null);
 		this.tasks = new HashSet<Task>();
+		this.dependencyGraph = new Graph();
+		
+		//this.dependencies = new HashMap<Task,Task>();
 	};
 	
 	/**
@@ -72,6 +79,41 @@ public class Project {
 		return true;
 	}
 	
+	public Graph clone(Graph graph) {
+    	Graph newGraph = new Graph();
+    	for (Vertex v : graph.getVertices()) {
+    		newGraph.addVertex(v);
+    		for (Vertex n : v.getNeigbors()) {
+    			newGraph.addEdge(v, n);
+    		}
+    	}
+    	return newGraph;
+    }
+	
+	public boolean hasCycle() {
+	    for (Vertex vertex : this.dependencyGraph.getVertices()) {
+	        if (!vertex.isVisited() && hasCycle(vertex)) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
+	public boolean hasCycle(Vertex sourceVertex) {
+	    sourceVertex.setBeingVisited(true);
+	    for (Vertex neighbor : sourceVertex.getAdjacencyList()) {
+	        if (neighbor.isBeingVisited()) {
+	            return true;
+	        } else if (!neighbor.isVisited() && hasCycle(neighbor)) {
+	            return true;
+	        }
+	    }
+
+	    sourceVertex.setBeingVisited(false);
+	    sourceVertex.setVisited(true);
+	    return false;
+	}
+	
 	/**
 	 * this function adds a task and it's dependencies to the graph of all tasks & their dependencies. If the updated graph
 	 * 	contains a loop, then the function returns false and nothing changes; if it doesn't contain a loop, then the updated
@@ -80,25 +122,30 @@ public class Project {
 	 * @post | 
 	 */
 	public boolean addTask(Task newTask, Set<Task> dependsOn) { 
-		DefaultDirectedGraph<Task, Task> newDirectedGraph = new DefaultDirectedGraph<Task, Task>(null);
-		Set<Task> tasks = this.dependencies.vertexSet();
-		for (Task task : tasks) {
-			newDirectedGraph.addVertex(task);
-			Set<Task> myDep = this.dependencies.edgesOf(task);
-			for (Task dep : myDep) {
-				newDirectedGraph.addEdge(task, dep);
+		if (this.dependencyGraph.isEmpty()) {
+			Vertex source = new Vertex(newTask);
+			for (Task toTask : dependsOn) {
+				Vertex target = new Vertex(toTask);
+				this.dependencyGraph.addEdge(source, target);
 			}
-		}
-		newDirectedGraph.addVertex(newTask);
-		for (Task t : dependsOn) {
-			newDirectedGraph.addEdge(newTask, t);
-		}
-		CycleDetector<Task, Task> cycleDetector = new CycleDetector<>(newDirectedGraph);
-		if (cycleDetector.detectCycles()) {return false;}
-		else {
-			this.dependencies = newDirectedGraph;
-			this.tasks.add(newTask);
 			return true;
+		}
+		else {
+			Graph newGraph = clone(this.dependencyGraph);
+			Vertex newVertex = new Vertex(newTask);
+			newGraph.addVertex(newVertex);
+			for (Task targetTask : dependsOn) {
+				Vertex nV = new Vertex(targetTask);
+				newGraph.addEdge(newVertex, nV);
+			}
+			if (hasCycle()) {
+				return false;
+			}
+			else {
+				this.dependencyGraph = newGraph;
+				this.tasks.add(newTask);
+				return true; 
+			}
 		}
 	}	
 		
@@ -110,19 +157,23 @@ public class Project {
 	 * @post | Every occurrence of oldTask is changed to newTask in dependencies
 	 */
 	public void replace(Task oldTask, Task newTask) {
-		newTask.addDepending(oldTask.dependsOn());
-		newTask.addWaiting(oldTask.waitingFor());
-		
-		Set<Task> dep = this.dependencies.edgesOf(oldTask);
-		this.dependencies.removeAllEdges(dep);
-		for (Task t : dep) {
-			this.dependencies.addEdge(newTask, t);
-		}
-		Set<Task> sources = this.dependencies.incomingEdgesOf(oldTask);
-		for (Task source : sources) {
-			this.dependencies.removeEdge(source, oldTask);
-			this.dependencies.addEdge(source, newTask);
-		}
+//		newTask.addDepending(oldTask.dependsOn());
+//		newTask.addWaiting(oldTask.waitingFor());
+//		Vertex oldV = this.dependencyGraph.getVertexFromTask(oldTask);
+//		List list = (List) oldV.getAdjacencyList();
+//	
+//		
+//		
+//		Set<Task> dep = this.dependencies.edgesOf(oldTask);
+//		this.dependencies.removeAllEdges(dep);
+//		for (Task t : dep) {
+//			this.dependencies.addEdge(newTask, t);
+//		}
+//		Set<Task> sources = this.dependencies.incomingEdgesOf(oldTask);
+//		for (Task source : sources) {
+//			this.dependencies.removeEdge(source, oldTask);
+//			this.dependencies.addEdge(source, newTask);
+//		}
 	}
 	
 	/**
@@ -158,7 +209,7 @@ public class Project {
 	/**
 	 * @basic
 	 */
-	public DefaultDirectedGraph<Task,Task> getDependencies() {return this.dependencies;}
+	public Graph getDependencies() {return this.dependencyGraph;}
 	
 	/**
 	 * Set's the status of this project as finished.

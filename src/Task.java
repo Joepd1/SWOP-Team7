@@ -53,7 +53,7 @@ public class Task {
 	 * @post | waitingFor() == imWaitingFor
 	 */
 	public Task(Project project, String description, int duration, double deviation, Set<Task> imWaitingFor) {		
-		if (deviation >= 1.0 || deviation <= 0 || project.addTask(this, imWaitingFor)) {
+		if (deviation >= 1.0 || deviation <= 0 || !project.addTask(this, imWaitingFor)) {
 			throw new IllegalArgumentException();
 		}
 		else {
@@ -62,7 +62,7 @@ public class Task {
 			this.estimatedDuration = duration;
 			this.acceptableDeviation = deviation;
 			this.status = new TaskStatus();
-			this.imWaitingFor = imWaitingFor;
+			this.imWaitingFor = imWaitingFor;			
 			for (Task task : this.imWaitingFor) {
 				if (!task.finishedTask()) {
 					this.status.haltTask();

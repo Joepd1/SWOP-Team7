@@ -13,7 +13,7 @@ public abstract class Status {
 	/**
 	 * This documents "status".
 	 */
-	protected static enum status {
+	public static enum status {
 		PENDING,WAITING,EXECUTING,FINISHED,FAILED;
 	}
 	
